@@ -1,12 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, memo, useCallback } from 'react';
 
-export default function Header() {
+function Header() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = useCallback((path: string) => location.pathname === path, [location.pathname]);
 
   const navLinkClass = (path: string) => `
     px-4 py-2 rounded-lg transition-colors font-medium
@@ -96,3 +96,5 @@ export default function Header() {
     </header>
   );
 }
+
+export default memo(Header);

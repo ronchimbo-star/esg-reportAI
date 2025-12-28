@@ -3,8 +3,6 @@ import { Search, Download, Eye, FileText, Image, File } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { supabase } from '../lib/supabase';
-import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
 
 interface Template {
   id: string;
@@ -151,6 +149,7 @@ export default function ESGTemplatesPage() {
     document.body.appendChild(container);
 
     try {
+      const html2canvas = (await import('html2canvas')).default;
       const canvas = await html2canvas(container);
       const url = canvas.toDataURL('image/png');
       const a = document.createElement('a');
@@ -180,6 +179,11 @@ export default function ESGTemplatesPage() {
     document.body.appendChild(container);
 
     try {
+      const [html2canvas, { jsPDF }] = await Promise.all([
+        import('html2canvas').then(m => m.default),
+        import('jspdf')
+      ]);
+
       const canvas = await html2canvas(container);
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({
