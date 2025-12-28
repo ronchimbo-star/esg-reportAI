@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { LogOut, Settings, FileText, Database, Ban, Shield, Layout, Globe } from 'lucide-react';
+import { LogOut, Settings, FileText, Database, Ban, Shield, Layout, Globe, FileStack, Newspaper, Image } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import SEOSettings from '../components/admin/SEOSettings';
 import ReportsView from '../components/admin/ReportsView';
@@ -8,8 +8,9 @@ import IPBanManagement from '../components/admin/IPBanManagement';
 import IPWhitelistManagement from '../components/admin/IPWhitelistManagement';
 import CMSManagement from '../components/admin/CMSManagement';
 import SiteSettings from '../components/admin/SiteSettings';
+import ESGTemplatesManagement from '../components/admin/ESGTemplatesManagement';
 
-type TabType = 'seo' | 'reports' | 'database' | 'ip-bans' | 'ip-whitelist' | 'cms' | 'site';
+type TabType = 'seo' | 'reports' | 'database' | 'ip-bans' | 'ip-whitelist' | 'cms' | 'site' | 'templates' | 'news' | 'media';
 
 interface AdminDashboardProps {
   onLogout: () => void;
@@ -43,7 +44,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
   const tabs = [
     { id: 'reports' as TabType, label: 'Reports', icon: FileText },
+    { id: 'templates' as TabType, label: 'ESG Templates', icon: FileStack },
+    { id: 'news' as TabType, label: 'News', icon: Newspaper },
     { id: 'cms' as TabType, label: 'CMS', icon: Layout },
+    { id: 'media' as TabType, label: 'Media', icon: Image },
     { id: 'site' as TabType, label: 'Site Settings', icon: Globe },
     { id: 'seo' as TabType, label: 'SEO', icon: Settings },
     { id: 'ip-bans' as TabType, label: 'IP Bans', icon: Ban },
@@ -105,6 +109,17 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           <div className="p-4 sm:p-6">
             {activeTab === 'seo' && <SEOSettings />}
             {activeTab === 'reports' && <ReportsView />}
+            {activeTab === 'templates' && <ESGTemplatesManagement />}
+            {activeTab === 'news' && (
+              <div className="text-center py-12">
+                <p className="text-gray-500">News management coming soon</p>
+              </div>
+            )}
+            {activeTab === 'media' && (
+              <div className="text-center py-12">
+                <p className="text-gray-500">Media manager coming soon</p>
+              </div>
+            )}
             {activeTab === 'cms' && <CMSManagement />}
             {activeTab === 'site' && <SiteSettings />}
             {activeTab === 'database' && <DatabaseExport />}

@@ -210,7 +210,7 @@ function App() {
         }),
       });
 
-      alert(`Report has been sent to ${formData.companyInfo.contactEmail} and our team at ronchimbo@gmail.com`);
+      alert(`Report has been sent to ${formData.companyInfo.contactEmail}`);
     } catch (error) {
       console.error('Error sending email:', error);
       alert('Failed to send email. Please try again.');
