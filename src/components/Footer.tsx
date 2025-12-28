@@ -36,7 +36,7 @@ function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="mb-4">
-              <img src="/esgreport logo-dark-back copy.png" alt="ESG Report AI" className="h-12" />
+              <img src="/esgreport-logo-dark.png" alt="ESG Report AI" className="h-12" />
             </div>
             <p className="text-sm mb-4">
               Free AI-powered ESG report generation aligned with global standards.

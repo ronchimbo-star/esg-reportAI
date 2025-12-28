@@ -229,7 +229,7 @@ function App() {
         <header className="text-center mb-8 sm:mb-12">
           <div className="mb-4">
             <img
-              src="/esgReport Icon.png"
+              src="/esgreport-icon.png"
               alt="ESG Report Logo"
               className="h-16 sm:h-20 md:h-24 mx-auto"
             />

@@ -51,7 +51,7 @@ export default function ProfessionalServicesModal({ isOpen, onClose }: Professio
           <div className="relative p-8 md:p-12">
             <div className="flex items-center justify-center mb-6">
               <img
-                src="/esgreport logo-dark-back.png"
+                src="/esgreport-logo-dark.png"
                 alt="esgReport"
                 className="h-16 md:h-20 w-auto"
               />

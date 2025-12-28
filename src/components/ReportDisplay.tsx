@@ -549,7 +549,7 @@ export default function ReportDisplay({
             {!isGenerating && reportMarkdown && (
               <div className="mb-10 text-center pb-8 border-b-2 border-green-100">
                 <img
-                  src="/esgreport logo-light-back.png"
+                  src="/esgreport-logo-light.png"
                   alt="ESGReport Logo"
                   className="h-20 mx-auto mb-4"
                 />
@@ -563,7 +563,7 @@ export default function ReportDisplay({
                 <div className="text-center">
                   <div className="mb-8">
                     <img
-                      src="/esgReport-traffic lights-bars.png"
+                      src="/esgreport-traffic-lights.png"
                       alt="Generating Report"
                       className="h-8 mx-auto animate-pulse"
                       style={{ filter: 'drop-shadow(0 4px 6px rgba(16, 185, 129, 0.3))' }}
@@ -642,7 +642,7 @@ export default function ReportDisplay({
                   <div className="text-center">
                     <div className="mb-6">
                       <img
-                        src="/esgReport-traffic lights-bars.png"
+                        src="/esgreport-traffic-lights.png"
                         alt="Generating Report"
                         className="h-8 mx-auto animate-pulse"
                         style={{ filter: 'drop-shadow(0 4px 6px rgba(16, 185, 129, 0.4))' }}
@@ -839,7 +839,7 @@ export default function ReportDisplay({
 
                 <div className="mt-10 text-center pb-8 border-t-2 border-gray-200 pt-8">
                   <img
-                    src="/esgreport logo-light-back.png"
+                    src="/esgreport-logo-light.png"
                     alt="ESGReport Logo"
                     className="h-16 mx-auto mb-4"
                   />

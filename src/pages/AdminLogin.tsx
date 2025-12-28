@@ -72,7 +72,7 @@ export default function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
         <div className="bg-white rounded-xl shadow-2xl p-8">
           <div className="text-center mb-8">
             <div className="flex justify-center mb-6">
-              <img src="/esgreport logo-light-back copy.png" alt="ESG Report AI" className="h-16" />
+              <img src="/esgreport-logo-light.png" alt="ESG Report AI" className="h-16" />
             </div>
             <p className="text-gray-600">Sign in to manage your ESG platform</p>
           </div>
