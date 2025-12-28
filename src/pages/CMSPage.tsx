@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { Loader2, ArrowLeft, ArrowRight } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import ShareButtons from '../components/ShareButtons';
 
 interface PageData {
   title: string;
@@ -122,6 +123,8 @@ export default function CMSPage() {
     }
   };
 
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+
   const replaceTemplateVars = (content: string): string => {
     let result = content;
     Object.keys(settings).forEach(key => {
@@ -162,7 +165,7 @@ export default function CMSPage() {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative">
           {isNewsArticle && (
             <>
               <div className="mb-6">
@@ -191,10 +194,43 @@ export default function CMSPage() {
                             <span
                               key={index}
                               className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium"
+
+          {isNewsArticle && (
+            <>
+              <ShareButtons
+                url={currentUrl}
+                title={page.title}
+                description={page.excerpt}
+                position="top"
+              />
+
+              <div className="hidden lg:block fixed left-8 top-1/2 -translate-y-1/2 z-10">
+                <div className="bg-white shadow-lg rounded-full p-3 border border-gray-200">
+                  <ShareButtons
+                    url={currentUrl}
+                    title={page.title}
+                    description={page.excerpt}
+                    position="middle"
+                    layout="vertical"
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
                             >
                               {category}
                             </span>
                           ))}
+
+          {isNewsArticle && (
+            <ShareButtons
+              url={currentUrl}
+              title={page.title}
+              description={page.excerpt}
+              position="bottom"
+            />
+          )}
                         </div>
                       </>
                     )}
