@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { LogOut, Settings, FileText, Database, Ban, Shield, Layout, Globe, BarChart3 } from 'lucide-react';
+import { LogOut, Settings, FileText, Database, Ban, Shield, Layout, Globe, BarChart3, MessageCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import SEOSettings from '../components/admin/SEOSettings';
 import ReportsView from '../components/admin/ReportsView';
@@ -9,8 +9,9 @@ import IPWhitelistManagement from '../components/admin/IPWhitelistManagement';
 import CMSManagement from '../components/admin/CMSManagement';
 import SiteSettings from '../components/admin/SiteSettings';
 import AnalyticsDashboard from '../components/admin/AnalyticsDashboard';
+import CommentModeration from '../components/admin/CommentModeration';
 
-type TabType = 'analytics' | 'reports' | 'cms' | 'site' | 'seo' | 'ip-bans' | 'ip-whitelist' | 'database';
+type TabType = 'analytics' | 'reports' | 'cms' | 'comments' | 'site' | 'seo' | 'ip-bans' | 'ip-whitelist' | 'database';
 
 interface AdminDashboardProps {
   onLogout: () => void;
@@ -46,6 +47,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     { id: 'analytics' as TabType, label: 'Analytics', icon: BarChart3 },
     { id: 'reports' as TabType, label: 'Reports', icon: FileText },
     { id: 'cms' as TabType, label: 'CMS', icon: Layout },
+    { id: 'comments' as TabType, label: 'Comments', icon: MessageCircle },
     { id: 'site' as TabType, label: 'Site Settings', icon: Globe },
     { id: 'seo' as TabType, label: 'SEO', icon: Settings },
     { id: 'ip-bans' as TabType, label: 'IP Bans', icon: Ban },
@@ -109,6 +111,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
             {activeTab === 'analytics' && <AnalyticsDashboard />}
             {activeTab === 'reports' && <ReportsView />}
             {activeTab === 'cms' && <CMSManagement />}
+            {activeTab === 'comments' && <CommentModeration />}
             {activeTab === 'site' && <SiteSettings />}
             {activeTab === 'database' && <DatabaseExport />}
             {activeTab === 'ip-bans' && <IPBanManagement />}

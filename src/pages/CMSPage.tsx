@@ -5,6 +5,8 @@ import { Loader2, ArrowLeft, ArrowRight } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ShareButtons from '../components/ShareButtons';
+import TemplateComments from '../components/TemplateComments';
+import TemplateRating from '../components/TemplateRating';
 
 interface PageData {
   title: string;
@@ -31,6 +33,9 @@ export default function CMSPage() {
   const [page, setPage] = useState<PageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [isNewsArticle, setIsNewsArticle] = useState(false);
+  const [isTemplate, setIsTemplate] = useState(false);
+  const [templateId, setTemplateId] = useState<string | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [previousArticle, setPreviousArticle] = useState<NavigationArticle | null>(null);
   const [nextArticle, setNextArticle] = useState<NavigationArticle | null>(null);
@@ -38,7 +43,13 @@ export default function CMSPage() {
   useEffect(() => {
     loadPage();
     loadSettings();
+    loadCurrentUser();
   }, [slug, location.pathname]);
+
+  const loadCurrentUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    setCurrentUserId(user?.id || null);
+  };
 
   const loadPage = async () => {
     try {
@@ -46,7 +57,9 @@ export default function CMSPage() {
 
       // Check if this is a news article route
       const isNews = location.pathname.startsWith('/news/');
+      const isTemplateRoute = location.pathname.startsWith('/template/');
       setIsNewsArticle(isNews);
+      setIsTemplate(isTemplateRoute);
 
       if (isNews) {
         // Load from news_articles table
@@ -83,6 +96,22 @@ export default function CMSPage() {
             }
           }
         }
+      } else if (isTemplateRoute) {
+        // Load from esg_templates table
+        const { data, error } = await supabase
+          .from('esg_templates')
+          .select('*')
+          .eq('slug', slug)
+          .eq('is_published', true)
+          .maybeSingle();
+
+        if (error) throw error;
+        if (data) {
+          setPage(data);
+          setTemplateId(data.id);
+        }
+        setPreviousArticle(null);
+        setNextArticle(null);
       } else {
         // Load from cms_pages table
         const { data, error } = await supabase
@@ -288,6 +317,13 @@ export default function CMSPage() {
                   </Link>
                 )}
               </div>
+            </div>
+          )}
+
+          {isTemplate && templateId && (
+            <div className="mt-12 pt-8 border-t border-gray-200 space-y-8">
+              <TemplateRating templateId={templateId} currentUserId={currentUserId} />
+              <TemplateComments templateId={templateId} currentUserId={currentUserId} />
             </div>
           )}
         </div>
