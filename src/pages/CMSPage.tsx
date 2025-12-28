@@ -194,9 +194,17 @@ export default function CMSPage() {
                             <span
                               key={index}
                               className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium"
+                            >
+                              {category}
+                            </span>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
 
-          {isNewsArticle && (
-            <>
               <ShareButtons
                 url={currentUrl}
                 title={page.title}
@@ -214,28 +222,6 @@ export default function CMSPage() {
                     layout="vertical"
                   />
                 </div>
-              </div>
-            </>
-          )}
-
-                            >
-                              {category}
-                            </span>
-                          ))}
-
-          {isNewsArticle && (
-            <ShareButtons
-              url={currentUrl}
-              title={page.title}
-              description={page.excerpt}
-              position="bottom"
-            />
-          )}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                )}
               </div>
 
               {page.featured_image && (
@@ -259,6 +245,15 @@ export default function CMSPage() {
             className="prose prose-lg max-w-none"
             dangerouslySetInnerHTML={{ __html: replaceTemplateVars(page.content) }}
           />
+
+          {isNewsArticle && (
+            <ShareButtons
+              url={currentUrl}
+              title={page.title}
+              description={page.excerpt}
+              position="bottom"
+            />
+          )}
 
           {isNewsArticle && (previousArticle || nextArticle) && (
             <div className="mt-12 pt-8 border-t border-gray-200">
