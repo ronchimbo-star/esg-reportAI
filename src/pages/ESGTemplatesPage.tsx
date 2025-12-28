@@ -29,6 +29,8 @@ export default function ESGTemplatesPage() {
   const [selectedJurisdiction, setSelectedJurisdiction] = useState('');
   const [loading, setLoading] = useState(true);
   const [viewingTemplate, setViewingTemplate] = useState<Template | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 30;
 
   const industries = Array.from(new Set(templates.flatMap(t => t.industries))).sort();
   const frameworks = Array.from(new Set(templates.flatMap(t => t.frameworks))).sort();
@@ -82,7 +84,13 @@ export default function ESGTemplatesPage() {
     }
 
     setFilteredTemplates(filtered);
+    setCurrentPage(1);
   };
+
+  const totalPages = Math.ceil(filteredTemplates.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedTemplates = filteredTemplates.slice(startIndex, endIndex);
 
   const incrementDownloadCount = async (templateId: string) => {
     try {
@@ -291,7 +299,7 @@ export default function ESGTemplatesPage() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {filteredTemplates.map(template => (
+                    {paginatedTemplates.map(template => (
                       <tr key={template.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4">
                           <div className="text-sm font-medium text-gray-900">{template.title}</div>
@@ -387,6 +395,59 @@ export default function ESGTemplatesPage() {
                   </tbody>
                 </table>
               </div>
+
+              {totalPages > 1 && (
+                <div className="mt-6 px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                  <div className="text-sm text-gray-600">
+                    Showing {startIndex + 1} to {Math.min(endIndex, filteredTemplates.length)} of {filteredTemplates.length} templates
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      Previous
+                    </button>
+
+                    <div className="flex gap-2">
+                      {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                        let page;
+                        if (totalPages <= 5) {
+                          page = i + 1;
+                        } else if (currentPage <= 3) {
+                          page = i + 1;
+                        } else if (currentPage >= totalPages - 2) {
+                          page = totalPages - 4 + i;
+                        } else {
+                          page = currentPage - 2 + i;
+                        }
+                        return (
+                          <button
+                            key={page}
+                            onClick={() => setCurrentPage(page)}
+                            className={`w-10 h-10 rounded-lg font-medium transition-colors ${
+                              currentPage === page
+                                ? 'bg-green-600 text-white'
+                                : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <button
+                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                      className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

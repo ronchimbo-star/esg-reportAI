@@ -19,6 +19,8 @@ export default function NewsPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9;
 
   const categories = Array.from(new Set(articles.flatMap(a => a.categories))).sort();
 
@@ -47,6 +49,16 @@ export default function NewsPage() {
     ? articles.filter(a => a.categories.includes(selectedCategory))
     : articles;
 
+  const totalPages = Math.ceil(filteredArticles.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedArticles = filteredArticles.slice(startIndex, endIndex);
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    setCurrentPage(1);
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -66,7 +78,7 @@ export default function NewsPage() {
           {categories.length > 0 && (
             <div className="mb-8 flex flex-wrap gap-2">
               <button
-                onClick={() => setSelectedCategory('')}
+                onClick={() => handleCategoryChange('')}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   selectedCategory === ''
                     ? 'bg-green-600 text-white'
@@ -78,7 +90,7 @@ export default function NewsPage() {
               {categories.map(category => (
                 <button
                   key={category}
-                  onClick={() => setSelectedCategory(category)}
+                  onClick={() => handleCategoryChange(category)}
                   className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                     selectedCategory === category
                       ? 'bg-green-600 text-white'
@@ -100,8 +112,9 @@ export default function NewsPage() {
               <p className="text-gray-600">No articles found.</p>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredArticles.map(article => (
+            <>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {paginatedArticles.map(article => (
                 <Link
                   key={article.id}
                   to={`/news/${article.slug}`}
@@ -137,7 +150,44 @@ export default function NewsPage() {
                   </div>
                 </Link>
               ))}
-            </div>
+              </div>
+
+              {totalPages > 1 && (
+                <div className="mt-12 flex items-center justify-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Previous
+                  </button>
+
+                  <div className="flex gap-2">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`w-10 h-10 rounded-lg font-medium transition-colors ${
+                          currentPage === page
+                            ? 'bg-green-600 text-white'
+                            : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </main>
