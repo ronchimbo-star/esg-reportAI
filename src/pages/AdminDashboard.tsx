@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { LogOut, Settings, FileText, Database, Ban, Shield, Layout, Globe } from 'lucide-react';
+import { LogOut, Settings, FileText, Database, Ban, Shield, Layout, Globe, BarChart3 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import SEOSettings from '../components/admin/SEOSettings';
 import ReportsView from '../components/admin/ReportsView';
@@ -8,15 +8,16 @@ import IPBanManagement from '../components/admin/IPBanManagement';
 import IPWhitelistManagement from '../components/admin/IPWhitelistManagement';
 import CMSManagement from '../components/admin/CMSManagement';
 import SiteSettings from '../components/admin/SiteSettings';
+import AnalyticsDashboard from '../components/admin/AnalyticsDashboard';
 
-type TabType = 'seo' | 'reports' | 'database' | 'ip-bans' | 'ip-whitelist' | 'cms' | 'site';
+type TabType = 'analytics' | 'reports' | 'cms' | 'site' | 'seo' | 'ip-bans' | 'ip-whitelist' | 'database';
 
 interface AdminDashboardProps {
   onLogout: () => void;
 }
 
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
-  const [activeTab, setActiveTab] = useState<TabType>('reports');
+  const [activeTab, setActiveTab] = useState<TabType>('analytics');
   const [adminInfo, setAdminInfo] = useState<{ email: string; full_name: string } | null>(null);
 
   useEffect(() => {
@@ -42,6 +43,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   };
 
   const tabs = [
+    { id: 'analytics' as TabType, label: 'Analytics', icon: BarChart3 },
     { id: 'reports' as TabType, label: 'Reports', icon: FileText },
     { id: 'cms' as TabType, label: 'CMS', icon: Layout },
     { id: 'site' as TabType, label: 'Site Settings', icon: Globe },
@@ -104,6 +106,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
           <div className="p-4 sm:p-6">
             {activeTab === 'seo' && <SEOSettings />}
+            {activeTab === 'analytics' && <AnalyticsDashboard />}
             {activeTab === 'reports' && <ReportsView />}
             {activeTab === 'cms' && <CMSManagement />}
             {activeTab === 'site' && <SiteSettings />}
