@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Mail, Phone, MapPin, Send } from 'lucide-react';
+import { Mail, Phone, Send } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
@@ -55,7 +55,7 @@ export default function ContactPage() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
+          <div className="grid md:grid-cols-2 gap-8 mb-16 max-w-2xl mx-auto">
             <div className="bg-white p-6 rounded-xl border-2 border-gray-200 text-center">
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Mail className="w-6 h-6 text-green-600" />
@@ -74,14 +74,6 @@ export default function ContactPage() {
               <a href="tel:+441234567890" className="text-blue-600 hover:text-blue-700">
                 +44 (0) 123 456 7890
               </a>
-            </div>
-
-            <div className="bg-white p-6 rounded-xl border-2 border-gray-200 text-center">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <MapPin className="w-6 h-6 text-purple-600" />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Visit Us</h3>
-              <p className="text-gray-600">London, United Kingdom</p>
             </div>
           </div>
 

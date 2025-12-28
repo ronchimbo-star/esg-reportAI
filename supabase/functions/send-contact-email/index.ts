@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -37,7 +38,32 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    console.log("Contact form submission received:", {
+    // Get client IP address
+    const ipAddress = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
+
+    // Initialize Supabase client with service role
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Save contact submission to database
+    const { error: dbError } = await supabase
+      .from("contact_submissions")
+      .insert({
+        name,
+        email,
+        subject,
+        message,
+        ip_address: ipAddress,
+        status: "new",
+      });
+
+    if (dbError) {
+      console.error("Database error:", dbError);
+      throw dbError;
+    }
+
+    console.log("Contact form submission saved:", {
       name,
       email,
       subject,

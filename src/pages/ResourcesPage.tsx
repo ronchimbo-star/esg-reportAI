@@ -8,11 +8,39 @@ import { supabase } from '../lib/supabase';
 export default function ResourcesPage() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubscribed(true);
-    setEmail('');
+    setLoading(true);
+    setError('');
+
+    try {
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/subscribe-newsletter`;
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to subscribe');
+      }
+
+      setSubscribed(true);
+      setEmail('');
+    } catch (err) {
+      console.error('Newsletter subscription error:', err);
+      setError(err instanceof Error ? err.message : 'Failed to subscribe. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -132,22 +160,31 @@ export default function ResourcesPage() {
                   <p className="text-green-50 mt-2">You'll receive our next newsletter soon.</p>
                 </div>
               ) : (
-                <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    required
-                    className="flex-1 px-6 py-3 rounded-lg text-gray-900"
-                  />
-                  <button
-                    type="submit"
-                    className="px-8 py-3 bg-white text-green-600 rounded-lg hover:bg-gray-100 transition-colors font-semibold"
-                  >
-                    Subscribe
-                  </button>
-                </form>
+                <>
+                  <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your email"
+                      required
+                      disabled={loading}
+                      className="flex-1 px-6 py-3 rounded-lg text-gray-900 disabled:opacity-50"
+                    />
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="px-8 py-3 bg-white text-green-600 rounded-lg hover:bg-gray-100 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {loading ? 'Subscribing...' : 'Subscribe'}
+                    </button>
+                  </form>
+                  {error && (
+                    <div className="mt-4 bg-red-500/20 backdrop-blur-sm rounded-lg p-4 max-w-md mx-auto">
+                      <p className="text-white">{error}</p>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>
