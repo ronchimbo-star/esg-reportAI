@@ -10,14 +10,14 @@ interface ESGTemplate {
   title: string;
   description: string | null;
   featured_image: string | null;
-  industries: string[];
-  frameworks: string[];
-  jurisdictions: string[];
+  industries: string[] | null;
+  frameworks: string[] | null;
+  jurisdictions: string[] | null;
   content: string;
   download_count: number;
   meta_description: string | null;
-  meta_keywords: string[];
-  category: string;
+  meta_keywords: string[] | null;
+  category: string | null;
   is_published: boolean;
   created_at: string;
   updated_at: string;
@@ -88,7 +88,7 @@ export default function ESGTemplatesManagement() {
       title: template.title,
       slug: template.slug,
       description: template.description || '',
-      category: template.category,
+      category: template.category || 'General',
       featured_image: template.featured_image || '',
       industries: template.industries || [],
       frameworks: template.frameworks || [],
@@ -232,7 +232,7 @@ export default function ESGTemplatesManagement() {
       template.title.toLowerCase().includes(search) ||
       template.description?.toLowerCase().includes(search) ||
       template.slug.toLowerCase().includes(search) ||
-      template.category.toLowerCase().includes(search)
+      template.category?.toLowerCase().includes(search)
     );
   });
 
@@ -321,18 +321,18 @@ export default function ESGTemplatesManagement() {
                     <div className="text-sm text-gray-500">{template.slug}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {template.category}
+                    {template.category || 'Uncategorized'}
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-sm text-gray-900">
-                      {template.frameworks.slice(0, 2).join(', ')}
-                      {template.frameworks.length > 2 && '...'}
+                      {template.frameworks?.slice(0, 2).join(', ') || '-'}
+                      {template.frameworks && template.frameworks.length > 2 && '...'}
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-sm text-gray-900">
-                      {template.industries.slice(0, 2).join(', ')}
-                      {template.industries.length > 2 && '...'}
+                      {template.industries?.slice(0, 2).join(', ') || '-'}
+                      {template.industries && template.industries.length > 2 && '...'}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
