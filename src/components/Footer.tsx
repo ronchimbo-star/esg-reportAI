@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
-import { Linkedin, Twitter, Facebook } from 'lucide-react';
+import { Mail, Linkedin, Twitter, Facebook } from 'lucide-react';
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
 
   return (
     <footer className="bg-gray-900 text-gray-300">
@@ -126,10 +127,38 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-          <p className="text-sm">
-            Copyright © 2026 ESG Report AI. All rights reserved.
-          </p>
+        <div className="border-t border-gray-800 mt-8 pt-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-sm">
+              Copyright © 2025 ESG Report AI. All rights reserved.
+            </p>
+            <div className="flex flex-wrap items-center gap-4 text-sm">
+              <Link to="/privacy-policy" className="hover:text-white transition-colors">
+                Privacy
+              </Link>
+              <span className="text-gray-600">|</span>
+              <Link to="/terms-of-service" className="hover:text-white transition-colors">
+                Terms
+              </Link>
+              <span className="text-gray-600">|</span>
+              <Link to="/resources" className="hover:text-white transition-colors">
+                Resources
+              </Link>
+              <span className="text-gray-600">|</span>
+              <a
+                href="https://esgreport.co.uk"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors"
+              >
+                ESG SaaS Platform
+              </a>
+              <span className="text-gray-600">|</span>
+              <Link to="/cookie-policy" className="hover:text-white transition-colors">
+                Cookies
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

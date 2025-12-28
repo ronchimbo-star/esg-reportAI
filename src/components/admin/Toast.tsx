@@ -1,39 +1,50 @@
 import { useEffect } from 'react';
-import { CheckCircle, XCircle, X } from 'lucide-react';
+import { CheckCircle, XCircle, AlertCircle, X } from 'lucide-react';
 
 interface ToastProps {
   message: string;
-  type: 'success' | 'error';
+  type: 'success' | 'error' | 'warning';
   onClose: () => void;
+  duration?: number;
 }
 
-export default function Toast({ message, type, onClose }: ToastProps) {
+export default function Toast({ message, type, onClose, duration = 3000 }: ToastProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose();
-    }, 5000);
+    }, duration);
 
     return () => clearTimeout(timer);
-  }, [onClose]);
+  }, [duration, onClose]);
+
+  const icons = {
+    success: <CheckCircle className="w-5 h-5 text-green-600" />,
+    error: <XCircle className="w-5 h-5 text-red-600" />,
+    warning: <AlertCircle className="w-5 h-5 text-amber-600" />,
+  };
+
+  const styles = {
+    success: 'bg-green-50 border-green-200',
+    error: 'bg-red-50 border-red-200',
+    warning: 'bg-amber-50 border-amber-200',
+  };
+
+  const textStyles = {
+    success: 'text-green-900',
+    error: 'text-red-900',
+    warning: 'text-amber-900',
+  };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 animate-slide-up">
-      <div
-        className={`flex items-center gap-3 px-6 py-4 rounded-lg shadow-lg ${
-          type === 'success'
-            ? 'bg-green-50 text-green-800 border border-green-200'
-            : 'bg-red-50 text-red-800 border border-red-200'
-        }`}
-      >
-        {type === 'success' ? (
-          <CheckCircle className="w-5 h-5 text-green-600" />
-        ) : (
-          <XCircle className="w-5 h-5 text-red-600" />
-        )}
-        <p className="font-medium">{message}</p>
+    <div className="fixed top-4 right-4 z-50 animate-slide-in">
+      <div className={`${styles[type]} border rounded-lg shadow-lg p-4 max-w-md flex items-start gap-3`}>
+        <div className="flex-shrink-0">{icons[type]}</div>
+        <div className={`flex-1 ${textStyles[type]} text-sm font-medium`}>
+          {message}
+        </div>
         <button
           onClick={onClose}
-          className="ml-2 p-1 hover:bg-white/50 rounded transition-colors"
+          className={`flex-shrink-0 ${textStyles[type]} hover:opacity-70 transition-opacity`}
         >
           <X className="w-4 h-4" />
         </button>
