@@ -11,8 +11,8 @@ export default function AdminApp() {
     checkAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      (async () => {
-        if (event === 'SIGNED_IN' && session) {
+      if (event === 'SIGNED_IN' && session) {
+        (async () => {
           const { data: adminData } = await supabase
             .from('admin_users')
             .select('*')
@@ -25,20 +25,10 @@ export default function AdminApp() {
             await supabase.auth.signOut();
             setIsAuthenticated(false);
           }
-        } else if (event === 'SIGNED_OUT') {
-          setIsAuthenticated(false);
-        } else if (session) {
-          const { data: adminData } = await supabase
-            .from('admin_users')
-            .select('*')
-            .eq('user_id', session.user.id)
-            .maybeSingle();
-
-          setIsAuthenticated(!!adminData);
-        } else {
-          setIsAuthenticated(false);
-        }
-      })();
+        })();
+      } else if (event === 'SIGNED_OUT') {
+        setIsAuthenticated(false);
+      }
     });
 
     return () => subscription.unsubscribe();
