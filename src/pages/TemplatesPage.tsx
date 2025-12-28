@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { supabase } from '../lib/supabase';
 import { Search, Eye, Download, FileText, Image as ImageIcon, Loader2 } from 'lucide-react';
@@ -34,7 +34,6 @@ export default function TemplatesPage() {
   const [jurisdictions, setJurisdictions] = useState<string[]>([]);
   const [downloading, setDownloading] = useState<string>('');
   const [viewingTemplate, setViewingTemplate] = useState<ESGTemplate | null>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     loadTemplates();
@@ -57,10 +56,10 @@ export default function TemplatesPage() {
       const allFrameworks = new Set<string>();
       const allJurisdictions = new Set<string>();
 
-      data?.forEach(template => {
-        template.industries?.forEach(ind => allIndustries.add(ind));
-        template.frameworks?.forEach(fw => allFrameworks.add(fw));
-        template.jurisdictions?.forEach(jur => allJurisdictions.add(jur));
+      data?.forEach((template: ESGTemplate) => {
+        template.industries?.forEach((ind: string) => allIndustries.add(ind));
+        template.frameworks?.forEach((fw: string) => allFrameworks.add(fw));
+        template.jurisdictions?.forEach((jur: string) => allJurisdictions.add(jur));
       });
 
       setIndustries(Array.from(allIndustries).sort());
