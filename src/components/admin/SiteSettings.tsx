@@ -1,11 +1,22 @@
 import { useState, useEffect } from 'react';
-import { Upload, Image as ImageIcon, Save, BarChart3 } from 'lucide-react';
+import { Upload, Image as ImageIcon, Save, BarChart3, Mail, Phone, Share2, Search } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import Toast from './Toast';
 
 export default function SiteSettings() {
   const [faviconUrl, setFaviconUrl] = useState('');
   const [googleAnalyticsId, setGoogleAnalyticsId] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
+  const [contactPhone, setContactPhone] = useState('');
+  const [supportEmail, setSupportEmail] = useState('');
+  const [enterpriseEmail, setEnterpriseEmail] = useState('');
+  const [partnershipsEmail, setPartnershipsEmail] = useState('');
+  const [socialLinkedin, setSocialLinkedin] = useState('');
+  const [socialTwitter, setSocialTwitter] = useState('');
+  const [socialFacebook, setSocialFacebook] = useState('');
+  const [siteMetaTitle, setSiteMetaTitle] = useState('');
+  const [siteMetaDescription, setSiteMetaDescription] = useState('');
+  const [siteMetaKeywords, setSiteMetaKeywords] = useState('');
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -18,15 +29,50 @@ export default function SiteSettings() {
     try {
       const { data } = await supabase
         .from('site_settings')
-        .select('*')
-        .in('key', ['favicon_url', 'google_analytics_id']);
+        .select('*');
 
       if (data) {
         data.forEach((setting) => {
-          if (setting.key === 'favicon_url') {
-            setFaviconUrl(setting.value || '');
-          } else if (setting.key === 'google_analytics_id') {
-            setGoogleAnalyticsId(setting.value || '');
+          switch (setting.key) {
+            case 'favicon_url':
+              setFaviconUrl(setting.value || '');
+              break;
+            case 'google_analytics_id':
+              setGoogleAnalyticsId(setting.value || '');
+              break;
+            case 'contact_email':
+              setContactEmail(setting.value || '');
+              break;
+            case 'contact_phone':
+              setContactPhone(setting.value || '');
+              break;
+            case 'support_email':
+              setSupportEmail(setting.value || '');
+              break;
+            case 'enterprise_email':
+              setEnterpriseEmail(setting.value || '');
+              break;
+            case 'partnerships_email':
+              setPartnershipsEmail(setting.value || '');
+              break;
+            case 'social_linkedin':
+              setSocialLinkedin(setting.value || '');
+              break;
+            case 'social_twitter':
+              setSocialTwitter(setting.value || '');
+              break;
+            case 'social_facebook':
+              setSocialFacebook(setting.value || '');
+              break;
+            case 'site_meta_title':
+              setSiteMetaTitle(setting.value || '');
+              break;
+            case 'site_meta_description':
+              setSiteMetaDescription(setting.value || '');
+              break;
+            case 'site_meta_keywords':
+              setSiteMetaKeywords(setting.value || '');
+              break;
           }
         });
       }
@@ -84,18 +130,19 @@ export default function SiteSettings() {
       const { data: { user } } = await supabase.auth.getUser();
 
       const updates = [
-        {
-          key: 'favicon_url',
-          value: faviconUrl,
-          updated_by: user?.id,
-          updated_at: new Date().toISOString(),
-        },
-        {
-          key: 'google_analytics_id',
-          value: googleAnalyticsId,
-          updated_by: user?.id,
-          updated_at: new Date().toISOString(),
-        },
+        { key: 'favicon_url', value: faviconUrl, updated_by: user?.id, updated_at: new Date().toISOString() },
+        { key: 'google_analytics_id', value: googleAnalyticsId, updated_by: user?.id, updated_at: new Date().toISOString() },
+        { key: 'contact_email', value: contactEmail, updated_by: user?.id, updated_at: new Date().toISOString() },
+        { key: 'contact_phone', value: contactPhone, updated_by: user?.id, updated_at: new Date().toISOString() },
+        { key: 'support_email', value: supportEmail, updated_by: user?.id, updated_at: new Date().toISOString() },
+        { key: 'enterprise_email', value: enterpriseEmail, updated_by: user?.id, updated_at: new Date().toISOString() },
+        { key: 'partnerships_email', value: partnershipsEmail, updated_by: user?.id, updated_at: new Date().toISOString() },
+        { key: 'social_linkedin', value: socialLinkedin, updated_by: user?.id, updated_at: new Date().toISOString() },
+        { key: 'social_twitter', value: socialTwitter, updated_by: user?.id, updated_at: new Date().toISOString() },
+        { key: 'social_facebook', value: socialFacebook, updated_by: user?.id, updated_at: new Date().toISOString() },
+        { key: 'site_meta_title', value: siteMetaTitle, updated_by: user?.id, updated_at: new Date().toISOString() },
+        { key: 'site_meta_description', value: siteMetaDescription, updated_by: user?.id, updated_at: new Date().toISOString() },
+        { key: 'site_meta_keywords', value: siteMetaKeywords, updated_by: user?.id, updated_at: new Date().toISOString() },
       ];
 
       const { error } = await supabase
@@ -105,7 +152,8 @@ export default function SiteSettings() {
       if (error) throw error;
 
       updateFavicon(faviconUrl);
-      window.location.reload();
+      setToast({ message: 'Settings saved successfully', type: 'success' });
+      setTimeout(() => window.location.reload(), 1000);
     } catch (error) {
       console.error('Error saving settings:', error);
       setToast({ message: 'Failed to save settings', type: 'error' });
@@ -231,6 +279,202 @@ export default function SiteSettings() {
                 <li>Copy the Measurement ID (starts with G-)</li>
               </ol>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+            <Mail className="w-5 h-5 text-green-600" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">Contact Information</h3>
+            <p className="text-sm text-gray-600">Email addresses and phone number for different departments</p>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              General Contact Email
+            </label>
+            <input
+              type="email"
+              value={contactEmail}
+              onChange={(e) => setContactEmail(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="info@esgreport.ai"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              value={contactPhone}
+              onChange={(e) => setContactPhone(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="+44 20 1234 5678"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Support Email
+            </label>
+            <input
+              type="email"
+              value={supportEmail}
+              onChange={(e) => setSupportEmail(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="support@esgreport.ai"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Enterprise Email
+            </label>
+            <input
+              type="email"
+              value={enterpriseEmail}
+              onChange={(e) => setEnterpriseEmail(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="enterprise@esgreport.ai"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Partnerships Email
+            </label>
+            <input
+              type="email"
+              value={partnershipsEmail}
+              onChange={(e) => setPartnershipsEmail(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="partnerships@esgreport.ai"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+            <Share2 className="w-5 h-5 text-purple-600" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">Social Media Links</h3>
+            <p className="text-sm text-gray-600">Connect your social media profiles</p>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              LinkedIn URL
+            </label>
+            <input
+              type="url"
+              value={socialLinkedin}
+              onChange={(e) => setSocialLinkedin(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="https://linkedin.com/company/esgreport-ai"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Twitter/X URL
+            </label>
+            <input
+              type="url"
+              value={socialTwitter}
+              onChange={(e) => setSocialTwitter(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="https://twitter.com/esgreportai"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Facebook URL
+            </label>
+            <input
+              type="url"
+              value={socialFacebook}
+              onChange={(e) => setSocialFacebook(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="https://facebook.com/esgreportai"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+            <Search className="w-5 h-5 text-orange-600" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">SEO Settings</h3>
+            <p className="text-sm text-gray-600">Optimize your site for search engines</p>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Site Meta Title
+            </label>
+            <input
+              type="text"
+              value={siteMetaTitle}
+              onChange={(e) => setSiteMetaTitle(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="ESG Report AI - Free AI-Powered ESG Reporting"
+              maxLength={60}
+            />
+            <p className="mt-1 text-sm text-gray-500">
+              {siteMetaTitle.length}/60 characters (recommended: 50-60)
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Site Meta Description
+            </label>
+            <textarea
+              value={siteMetaDescription}
+              onChange={(e) => setSiteMetaDescription(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="Generate professional ESG reports for free using AI. Aligned with GRI, TCFD, SASB, EU CSRD and other global sustainability reporting standards."
+              rows={3}
+              maxLength={160}
+            />
+            <p className="mt-1 text-sm text-gray-500">
+              {siteMetaDescription.length}/160 characters (recommended: 150-160)
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Site Meta Keywords
+            </label>
+            <input
+              type="text"
+              value={siteMetaKeywords}
+              onChange={(e) => setSiteMetaKeywords(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="ESG reporting, sustainability reporting, AI ESG, GRI, TCFD, SASB"
+            />
+            <p className="mt-1 text-sm text-gray-500">
+              Separate keywords with commas
+            </p>
           </div>
         </div>
       </div>

@@ -1,8 +1,34 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Linkedin, Twitter, Facebook } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const [settings, setSettings] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    loadSettings();
+  }, []);
+
+  const loadSettings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('key, value')
+        .in('key', ['contact_email', 'support_email', 'social_linkedin', 'social_twitter', 'social_facebook']);
+
+      if (error) throw error;
+
+      const settingsMap: Record<string, string> = {};
+      data?.forEach(item => {
+        settingsMap[item.key] = item.value;
+      });
+      setSettings(settingsMap);
+    } catch (error) {
+      console.error('Error loading settings:', error);
+    }
+  };
 
   return (
     <footer className="bg-gray-900 text-gray-300">
@@ -16,30 +42,36 @@ export default function Footer() {
               Free AI-powered ESG report generation aligned with global standards.
             </p>
             <div className="flex gap-3">
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
-              >
-                <Linkedin className="w-5 h-5" />
-              </a>
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
-              >
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
-              >
-                <Facebook className="w-5 h-5" />
-              </a>
+              {settings.social_linkedin && (
+                <a
+                  href={settings.social_linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
+                >
+                  <Linkedin className="w-5 h-5" />
+                </a>
+              )}
+              {settings.social_twitter && (
+                <a
+                  href={settings.social_twitter}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
+                >
+                  <Twitter className="w-5 h-5" />
+                </a>
+              )}
+              {settings.social_facebook && (
+                <a
+                  href={settings.social_facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
+                >
+                  <Facebook className="w-5 h-5" />
+                </a>
+              )}
             </div>
           </div>
 
@@ -138,7 +170,7 @@ export default function Footer() {
               </Link>
               <span className="text-gray-600">|</span>
               <a
-                href="mailto:support@esgreportai.com"
+                href={`mailto:${settings.support_email || 'support@esgreport.ai'}`}
                 className="hover:text-white transition-colors"
               >
                 Support
