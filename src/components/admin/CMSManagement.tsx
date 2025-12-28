@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { FileText, Layout, Newspaper, Image } from 'lucide-react';
+import ESGTemplatesManagement from './ESGTemplatesManagement';
+import NewsArticlesManagement from './NewsArticlesManagement';
+import MediaLibraryManagement from './MediaLibraryManagement';
 
 export default function CMSManagement() {
   const [activeTab, setActiveTab] = useState<'pages' | 'templates' | 'news' | 'media'>('pages');
@@ -61,81 +64,11 @@ export default function CMSManagement() {
           </div>
         )}
 
-        {activeTab === 'templates' && (
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-900">ESG Templates</h3>
-              <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
-                Create New Template
-              </button>
-            </div>
-            <p className="text-gray-600 mb-4">
-              Create and manage ESG report templates filterable by industry, framework, and jurisdiction.
-              Templates include featured images, download counters, and SEO settings.
-            </p>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-900">
-                <strong>Note:</strong> This is a placeholder interface. Full management includes template editor, industry/framework/jurisdiction selection, featured image upload, and download tracking.
-              </p>
-            </div>
-          </div>
-        )}
+        {activeTab === 'templates' && <ESGTemplatesManagement />}
 
-        {activeTab === 'news' && (
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-900">News & Blog Articles</h3>
-              <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
-                Create New Article
-              </button>
-            </div>
-            <p className="text-gray-600 mb-4">
-              Write and publish news articles and blog posts about ESG insights, industry trends, and AI innovations.
-              Includes featured images, categories, tags, and full SEO controls.
-            </p>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-900">
-                <strong>Note:</strong> This is a placeholder interface. Full editor includes rich text editing, featured image selection, category/tag management, publishing schedule, and SEO fields.
-              </p>
-            </div>
-          </div>
-        )}
+        {activeTab === 'news' && <NewsArticlesManagement />}
 
-        {activeTab === 'media' && (
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-900">Media Library</h3>
-              <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
-                Upload Media
-              </button>
-            </div>
-            <p className="text-gray-600 mb-4">
-              Upload and manage images and media files. Set alt text, captions, titles, and descriptions for SEO.
-              All uploaded media can be used across pages, templates, and articles.
-            </p>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-900">
-                <strong>Note:</strong> This is a placeholder interface. Full media manager includes drag-drop upload, image preview grid, SEO metadata editor, and file management tools.
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-        <h4 className="text-lg font-bold text-yellow-900 mb-2">Implementation Status</h4>
-        <p className="text-yellow-900 mb-4">
-          The CMS database structure is complete and ready. This interface provides a foundation for full content management.
-          For production use, implement:
-        </p>
-        <ul className="list-disc list-inside space-y-2 text-yellow-900">
-          <li>Rich text editor (e.g., TipTap, Quill, or Draft.js)</li>
-          <li>Image upload with Supabase Storage integration</li>
-          <li>Form validation and error handling</li>
-          <li>Real-time preview functionality</li>
-          <li>Drag-and-drop media management</li>
-          <li>Automatic sitemap generation on publish</li>
-        </ul>
+        {activeTab === 'media' && <MediaLibraryManagement />}
       </div>
     </div>
   );
