@@ -1,4 +1,5 @@
-import { X, CheckCircle, TrendingUp } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, CheckCircle, TrendingUp, Sparkles } from 'lucide-react';
 
 interface UpsellModalProps {
   isOpen: boolean;
@@ -6,28 +7,78 @@ interface UpsellModalProps {
 }
 
 export default function UpsellModal({ isOpen, onClose }: UpsellModalProps) {
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setShowSuccess(false);
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const handleContactUs = () => {
     console.log('Lead captured: User interested in professional service');
-    alert('Thank you for your interest! Our team will contact you within 24 hours.');
+    setShowSuccess(true);
+  };
+
+  const handleCloseSuccess = () => {
+    setShowSuccess(false);
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
+    <div className="fixed inset-0 z-50 overflow-y-auto animate-fadeIn">
       <div className="flex min-h-screen items-center justify-center p-4">
-        <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onClick={onClose}></div>
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+          onClick={showSuccess ? undefined : onClose}
+        ></div>
 
-        <div className="relative bg-white rounded-xl shadow-2xl max-w-3xl w-full p-8 transform transition-all">
+        <div className="relative bg-white rounded-xl shadow-2xl max-w-3xl w-full p-8 transform transition-all animate-slideUp">
           <button
-            onClick={onClose}
+            onClick={showSuccess ? handleCloseSuccess : onClose}
             className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
           >
             <X className="w-6 h-6" />
           </button>
 
-          <div className="text-center mb-8">
+          {showSuccess ? (
+            <div className="text-center py-8 animate-fadeIn">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full mb-6 animate-bounce-gentle">
+                <CheckCircle className="w-10 h-10 text-white" />
+              </div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                Thank You for Your Interest!
+              </h2>
+              <p className="text-lg text-gray-600 mb-6 max-w-md mx-auto">
+                Our ESG consulting team has received your request and will contact you within 24 hours to discuss your specific needs.
+              </p>
+              <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-6 mb-8 max-w-lg mx-auto">
+                <div className="flex items-start gap-3 text-left">
+                  <Sparkles className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-green-900 mb-1">
+                      What happens next?
+                    </p>
+                    <ul className="text-sm text-green-800 space-y-1">
+                      <li>• We'll review your ESG reporting requirements</li>
+                      <li>• Discuss compliance and audit needs</li>
+                      <li>• Provide a customized service proposal</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={handleCloseSuccess}
+                className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all font-medium shadow-lg"
+              >
+                Got it, thanks!
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full mb-4">
               <TrendingUp className="w-8 h-8 text-white" />
             </div>
@@ -127,6 +178,8 @@ export default function UpsellModal({ isOpen, onClose }: UpsellModalProps) {
           <p className="text-center text-xs text-gray-500 mt-4">
             Our team will contact you within 24 hours to discuss your needs
           </p>
+            </>
+          )}
         </div>
       </div>
     </div>
