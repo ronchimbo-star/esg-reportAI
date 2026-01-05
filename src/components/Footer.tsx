@@ -124,6 +124,17 @@ function Footer() {
                   How It Works
                 </Link>
               </li>
+              <li>
+                <a
+                  href="https://greenregistry.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors flex items-center gap-1"
+                >
+                  Green Registry
+                  <span className="text-xs">↗</span>
+                </a>
+              </li>
             </ul>
           </div>
 
