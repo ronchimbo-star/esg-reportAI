@@ -84,18 +84,18 @@ function Footer() {
                 </Link>
               </li>
               <li>
+                <Link to="/professional-services" className="hover:text-white transition-colors">
+                  Professional Services
+                </Link>
+              </li>
+              <li>
+                <Link to="/pricing" className="hover:text-white transition-colors">
+                  Pricing
+                </Link>
+              </li>
+              <li>
                 <Link to="/contact" className="hover:text-white transition-colors">
                   Contact
-                </Link>
-              </li>
-              <li>
-                <Link to="/esg-templates" className="hover:text-white transition-colors">
-                  ESG Templates
-                </Link>
-              </li>
-              <li>
-                <Link to="/news" className="hover:text-white transition-colors">
-                  News & Blog
                 </Link>
               </li>
             </ul>
@@ -110,29 +110,19 @@ function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/how-it-works" className="hover:text-white transition-colors">
-                  How It Works
+                <Link to="/esg-templates" className="hover:text-white transition-colors">
+                  ESG Templates
                 </Link>
               </li>
               <li>
-                <a
-                  href="https://esgreport.co.uk"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white transition-colors"
-                >
-                  ESG SaaS Platform
-                </a>
+                <Link to="/news" className="hover:text-white transition-colors">
+                  News & Blog
+                </Link>
               </li>
               <li>
-                <a
-                  href="https://greenregistry.org"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white transition-colors"
-                >
-                  Green Registry
-                </a>
+                <Link to="/how-it-works" className="hover:text-white transition-colors">
+                  How It Works
+                </Link>
               </li>
             </ul>
           </div>

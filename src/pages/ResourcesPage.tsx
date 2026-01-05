@@ -61,6 +61,19 @@ export default function ResourcesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
             <Link
+              to="/professional-services"
+              className="bg-gradient-to-br from-green-50 to-emerald-50 p-8 rounded-xl border-2 border-green-500 hover:border-green-600 hover:shadow-lg transition-all group"
+            >
+              <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mb-4 group-hover:bg-green-700 transition-colors">
+                <TrendingUp className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Professional ESG Reporting</h3>
+              <p className="text-gray-600">
+                Expert-led ESG consulting and audit-ready reports with comprehensive support.
+              </p>
+            </Link>
+
+            <Link
               to="/news"
               className="bg-white p-8 rounded-xl border-2 border-gray-200 hover:border-green-500 hover:shadow-lg transition-all group"
             >
@@ -111,23 +124,6 @@ export default function ResourcesPage() {
                 Get in touch with our team for support, partnerships, or questions.
               </p>
             </Link>
-
-            <a
-              href="https://esgreport.co.uk"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white p-8 rounded-xl border-2 border-gray-200 hover:border-green-500 hover:shadow-lg transition-all group"
-            >
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-green-600 transition-colors">
-                <TrendingUp className="w-6 h-6 text-green-600 group-hover:text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-                Full ESG Platform <ExternalLink className="w-4 h-4" />
-              </h3>
-              <p className="text-gray-600">
-                Upgrade to our comprehensive SaaS platform for ongoing tracking and support.
-              </p>
-            </a>
 
             <a
               href="https://greenregistry.org"

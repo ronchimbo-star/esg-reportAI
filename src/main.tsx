@@ -12,6 +12,8 @@ const HowItWorksPage = lazy(() => import('./pages/HowItWorksPage'));
 const ESGTemplatesPage = lazy(() => import('./pages/ESGTemplatesPage'));
 const NewsPage = lazy(() => import('./pages/NewsPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
+const ProfessionalServicesPage = lazy(() => import('./pages/ProfessionalServicesPage'));
+const PricingPage = lazy(() => import('./pages/PricingPage'));
 
 const LoadingSpinner = () => (
   <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -36,6 +38,8 @@ if (!rootElement.hasChildNodes()) {
             <Routes>
               <Route path="/" element={<App />} />
               <Route path="/admin/*" element={<AdminApp />} />
+              <Route path="/professional-services" element={<ProfessionalServicesPage />} />
+              <Route path="/pricing" element={<PricingPage />} />
               <Route path="/resources" element={<ResourcesPage />} />
               <Route path="/how-it-works" element={<HowItWorksPage />} />
               <Route path="/esg-templates" element={<ESGTemplatesPage />} />

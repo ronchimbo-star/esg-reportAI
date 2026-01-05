@@ -28,6 +28,12 @@ function Header() {
             <Link to="/" className={navLinkClass('/')}>
               Home
             </Link>
+            <Link to="/professional-services" className={navLinkClass('/professional-services')}>
+              Professional Services
+            </Link>
+            <Link to="/pricing" className={navLinkClass('/pricing')}>
+              Pricing
+            </Link>
             <Link to="/esg-templates" className={navLinkClass('/esg-templates')}>
               ESG Templates
             </Link>
@@ -61,6 +67,20 @@ function Header() {
               onClick={() => setMobileMenuOpen(false)}
             >
               Home
+            </Link>
+            <Link
+              to="/professional-services"
+              className="block px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Professional Services
+            </Link>
+            <Link
+              to="/pricing"
+              className="block px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Pricing
             </Link>
             <Link
               to="/esg-templates"
