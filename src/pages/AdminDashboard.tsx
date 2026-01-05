@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { LogOut, Settings, FileText, Database, Ban, Shield, Layout, Globe, BarChart3, MessageCircle, Mail } from 'lucide-react';
+import { LogOut, Settings, FileText, Database, Ban, Shield, Layout, Globe, BarChart3, MessageCircle, Mail, Newspaper } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import SEOSettings from '../components/admin/SEOSettings';
 import ReportsView from '../components/admin/ReportsView';
@@ -11,8 +11,9 @@ import SiteSettings from '../components/admin/SiteSettings';
 import AnalyticsDashboard from '../components/admin/AnalyticsDashboard';
 import CommentModeration from '../components/admin/CommentModeration';
 import ContactSubmissions from '../components/admin/ContactSubmissions';
+import NewsletterSubscriptions from '../components/admin/NewsletterSubscriptions';
 
-type TabType = 'analytics' | 'reports' | 'cms' | 'comments' | 'contact' | 'site' | 'seo' | 'ip-bans' | 'ip-whitelist' | 'database';
+type TabType = 'analytics' | 'reports' | 'cms' | 'comments' | 'contact' | 'newsletter' | 'site' | 'seo' | 'ip-bans' | 'ip-whitelist' | 'database';
 
 interface AdminDashboardProps {
   onLogout: () => void;
@@ -50,6 +51,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     { id: 'cms' as TabType, label: 'CMS', icon: Layout },
     { id: 'comments' as TabType, label: 'Comments', icon: MessageCircle },
     { id: 'contact' as TabType, label: 'Contact', icon: Mail },
+    { id: 'newsletter' as TabType, label: 'Newsletter', icon: Newspaper },
     { id: 'site' as TabType, label: 'Site Settings', icon: Globe },
     { id: 'seo' as TabType, label: 'SEO', icon: Settings },
     { id: 'ip-bans' as TabType, label: 'IP Bans', icon: Ban },
@@ -115,6 +117,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
             {activeTab === 'cms' && <CMSManagement />}
             {activeTab === 'comments' && <CommentModeration />}
             {activeTab === 'contact' && <ContactSubmissions />}
+            {activeTab === 'newsletter' && <NewsletterSubscriptions />}
             {activeTab === 'site' && <SiteSettings />}
             {activeTab === 'database' && <DatabaseExport />}
             {activeTab === 'ip-bans' && <IPBanManagement />}
