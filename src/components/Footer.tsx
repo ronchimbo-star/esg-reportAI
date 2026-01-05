@@ -150,22 +150,10 @@ function Footer() {
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="text-center">
             <p className="text-sm">
               Copyright © 2026 ESG Report AI. All rights reserved.
             </p>
-            <div className="flex flex-wrap items-center gap-4 text-sm">
-              <Link to="/contact" className="hover:text-white transition-colors">
-                Contact
-              </Link>
-              <span className="text-gray-600">|</span>
-              <a
-                href={`mailto:${settings.support_email || 'support@esgreport.ai'}`}
-                className="hover:text-white transition-colors"
-              >
-                Support
-              </a>
-            </div>
           </div>
         </div>
       </div>
