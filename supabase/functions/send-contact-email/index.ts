@@ -39,15 +39,12 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Get client IP address
     const ipAddress = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
 
-    // Initialize Supabase client with service role
     const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Save contact submission to database
     const { error: dbError } = await supabase
       .from("contact_submissions")
       .insert({

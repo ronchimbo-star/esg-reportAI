@@ -35,7 +35,6 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return new Response(
@@ -50,15 +49,12 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Get client IP address
     const ipAddress = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
 
-    // Initialize Supabase client with service role
     const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Check if email already exists
     const { data: existing } = await supabase
       .from("newsletter_subscriptions")
       .select("id, status")
@@ -81,7 +77,6 @@ Deno.serve(async (req: Request) => {
           }
         );
       } else {
-        // Re-subscribe
         const { error: updateError } = await supabase
           .from("newsletter_subscriptions")
           .update({
@@ -112,7 +107,6 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    // New subscription
     const { error: dbError } = await supabase
       .from("newsletter_subscriptions")
       .insert({
