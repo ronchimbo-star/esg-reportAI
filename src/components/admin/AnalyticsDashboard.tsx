@@ -58,7 +58,7 @@ export default function AnalyticsDashboard() {
   const loadAnalytics = async () => {
     try {
       setLoading(true);
-      await Promise.all([
+      await Promise.allSettled([
         loadDashboardStats(),
         loadTopPages(),
         loadTopIndustries(),
@@ -66,7 +66,7 @@ export default function AnalyticsDashboard() {
         loadReportTrends(),
       ]);
     } catch (error) {
-      console.error('Error loading analytics:', error);
+
     } finally {
       setLoading(false);
     }
@@ -87,125 +87,142 @@ export default function AnalyticsDashboard() {
   };
 
   const loadDashboardStats = async () => {
-    const firstOfMonth = new Date();
-    firstOfMonth.setDate(1);
-    firstOfMonth.setHours(0, 0, 0, 0);
+    try {
+      const firstOfMonth = new Date();
+      firstOfMonth.setDate(1);
+      firstOfMonth.setHours(0, 0, 0, 0);
 
-    const [reports, reportsThisMonth, pageViews, pageViewsThisMonth, downloads, downloadsThisMonth, users, usersThisMonth] = await Promise.all([
-      supabase.from('generated_reports').select('id', { count: 'exact', head: true }),
-      supabase.from('generated_reports').select('id', { count: 'exact', head: true }).gte('created_at', firstOfMonth.toISOString()),
-      supabase.from('page_views').select('id', { count: 'exact', head: true }),
-      supabase.from('page_views').select('id', { count: 'exact', head: true }).gte('created_at', firstOfMonth.toISOString()),
-      supabase.from('template_downloads').select('id', { count: 'exact', head: true }),
-      supabase.from('template_downloads').select('id', { count: 'exact', head: true }).gte('downloaded_at', firstOfMonth.toISOString()),
-      supabase.from('user_profiles').select('id', { count: 'exact', head: true }),
-      supabase.from('user_profiles').select('id', { count: 'exact', head: true }).gte('created_at', firstOfMonth.toISOString()),
-    ]);
+      const [reports, reportsThisMonth, pageViews, pageViewsThisMonth, downloads, downloadsThisMonth, users, usersThisMonth] = await Promise.allSettled([
+        supabase.from('generated_reports').select('id', { count: 'exact', head: true }),
+        supabase.from('generated_reports').select('id', { count: 'exact', head: true }).gte('created_at', firstOfMonth.toISOString()),
+        supabase.from('page_views').select('id', { count: 'exact', head: true }),
+        supabase.from('page_views').select('id', { count: 'exact', head: true }).gte('created_at', firstOfMonth.toISOString()),
+        supabase.from('template_downloads').select('id', { count: 'exact', head: true }),
+        supabase.from('template_downloads').select('id', { count: 'exact', head: true }).gte('downloaded_at', firstOfMonth.toISOString()),
+        supabase.from('user_profiles').select('id', { count: 'exact', head: true }),
+        supabase.from('user_profiles').select('id', { count: 'exact', head: true }).gte('created_at', firstOfMonth.toISOString()),
+      ]);
 
-    setStats({
-      totalReports: reports.count || 0,
-      reportsThisMonth: reportsThisMonth.count || 0,
-      totalPageViews: pageViews.count || 0,
-      pageViewsThisMonth: pageViewsThisMonth.count || 0,
-      totalDownloads: downloads.count || 0,
-      downloadsThisMonth: downloadsThisMonth.count || 0,
-      totalUsers: users.count || 0,
-      usersThisMonth: usersThisMonth.count || 0,
-    });
+      setStats({
+        totalReports: reports.status === 'fulfilled' ? (reports.value.count || 0) : 0,
+        reportsThisMonth: reportsThisMonth.status === 'fulfilled' ? (reportsThisMonth.value.count || 0) : 0,
+        totalPageViews: pageViews.status === 'fulfilled' ? (pageViews.value.count || 0) : 0,
+        pageViewsThisMonth: pageViewsThisMonth.status === 'fulfilled' ? (pageViewsThisMonth.value.count || 0) : 0,
+        totalDownloads: downloads.status === 'fulfilled' ? (downloads.value.count || 0) : 0,
+        downloadsThisMonth: downloadsThisMonth.status === 'fulfilled' ? (downloadsThisMonth.value.count || 0) : 0,
+        totalUsers: users.status === 'fulfilled' ? (users.value.count || 0) : 0,
+        usersThisMonth: usersThisMonth.status === 'fulfilled' ? (usersThisMonth.value.count || 0) : 0,
+      });
+    } catch (error) {
+      console.error('Error loading dashboard stats:', error);
+    }
   };
 
   const loadTopPages = async () => {
-    const { data, error } = await supabase.rpc('get_top_pages', {
-      time_filter: getDateFilter(),
-      limit_count: 10
-    });
+    try {
+      const { data, error } = await supabase.rpc('get_top_pages', {
+        time_filter: getDateFilter(),
+        limit_count: 10
+      });
 
-    if (error) {
-      console.error('Error loading top pages:', error);
-      return;
+      if (!error && data) {
+        setTopPages(data);
+      }
+    } catch (error) {
+      setTopPages([]);
     }
-
-    setTopPages(data || []);
   };
 
   const loadTopIndustries = async () => {
-    const dateFilter = getDateFilter();
-    const { data, error } = await supabase
-      .from('generated_reports')
-      .select('industries')
-      .gte('created_at', dateFilter);
+    try {
+      const dateFilter = getDateFilter();
+      const { data, error } = await supabase
+        .from('generated_reports')
+        .select('industries')
+        .gte('created_at', dateFilter);
 
-    if (error) {
-      console.error('Error loading industries:', error);
-      return;
-    }
+      if (error || !data) {
+        setTopIndustries([]);
+        return;
+      }
 
-    const industryCounts: Record<string, number> = {};
-    data.forEach(report => {
-      report.industries?.forEach((industry: string) => {
-        industryCounts[industry] = (industryCounts[industry] || 0) + 1;
+      const industryCounts: Record<string, number> = {};
+      data.forEach(report => {
+        report.industries?.forEach((industry: string) => {
+          industryCounts[industry] = (industryCounts[industry] || 0) + 1;
+        });
       });
-    });
 
-    const sorted = Object.entries(industryCounts)
-      .map(([industry, count]) => ({ industry, count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 10);
+      const sorted = Object.entries(industryCounts)
+        .map(([industry, count]) => ({ industry, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 10);
 
-    setTopIndustries(sorted);
+      setTopIndustries(sorted);
+    } catch (error) {
+      setTopIndustries([]);
+    }
   };
 
   const loadTopFrameworks = async () => {
-    const dateFilter = getDateFilter();
-    const { data, error } = await supabase
-      .from('generated_reports')
-      .select('frameworks')
-      .gte('created_at', dateFilter);
+    try {
+      const dateFilter = getDateFilter();
+      const { data, error } = await supabase
+        .from('generated_reports')
+        .select('frameworks')
+        .gte('created_at', dateFilter);
 
-    if (error) {
-      console.error('Error loading frameworks:', error);
-      return;
-    }
+      if (error || !data) {
+        setTopFrameworks([]);
+        return;
+      }
 
-    const frameworkCounts: Record<string, number> = {};
-    data.forEach(report => {
-      report.frameworks?.forEach((framework: string) => {
-        frameworkCounts[framework] = (frameworkCounts[framework] || 0) + 1;
+      const frameworkCounts: Record<string, number> = {};
+      data.forEach(report => {
+        report.frameworks?.forEach((framework: string) => {
+          frameworkCounts[framework] = (frameworkCounts[framework] || 0) + 1;
+        });
       });
-    });
 
-    const sorted = Object.entries(frameworkCounts)
-      .map(([framework, count]) => ({ framework, count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 10);
+      const sorted = Object.entries(frameworkCounts)
+        .map(([framework, count]) => ({ framework, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 10);
 
-    setTopFrameworks(sorted);
+      setTopFrameworks(sorted);
+    } catch (error) {
+      setTopFrameworks([]);
+    }
   };
 
   const loadReportTrends = async () => {
-    const dateFilter = getDateFilter();
-    const { data, error } = await supabase
-      .from('generated_reports')
-      .select('created_at')
-      .gte('created_at', dateFilter)
-      .order('created_at', { ascending: true });
+    try {
+      const dateFilter = getDateFilter();
+      const { data, error } = await supabase
+        .from('generated_reports')
+        .select('created_at')
+        .gte('created_at', dateFilter)
+        .order('created_at', { ascending: true });
 
-    if (error) {
-      console.error('Error loading report trends:', error);
-      return;
+      if (error || !data) {
+        setReportTrends([]);
+        return;
+      }
+
+      const dateCounts: Record<string, number> = {};
+      data.forEach(report => {
+        const date = new Date(report.created_at).toISOString().split('T')[0];
+        dateCounts[date] = (dateCounts[date] || 0) + 1;
+      });
+
+      const trends = Object.entries(dateCounts)
+        .map(([date, count]) => ({ date, count }))
+        .sort((a, b) => a.date.localeCompare(b.date));
+
+      setReportTrends(trends);
+    } catch (error) {
+      setReportTrends([]);
     }
-
-    const dateCounts: Record<string, number> = {};
-    data.forEach(report => {
-      const date = new Date(report.created_at).toISOString().split('T')[0];
-      dateCounts[date] = (dateCounts[date] || 0) + 1;
-    });
-
-    const trends = Object.entries(dateCounts)
-      .map(([date, count]) => ({ date, count }))
-      .sort((a, b) => a.date.localeCompare(b.date));
-
-    setReportTrends(trends);
   };
 
   const StatCard = ({ icon: Icon, title, value, change, color }: { icon: any, title: string, value: string | number, change: string, color: string }) => (
