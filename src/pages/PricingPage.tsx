@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Check, X, Send } from 'lucide-react';
+import { Check, X, Send, Shield } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
@@ -69,50 +69,56 @@ export default function PricingPage() {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-8 flex flex-col">
               <div className="mb-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Starter</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Starter Package</h3>
                 <p className="text-gray-600 mb-6">Perfect for small businesses getting started with ESG</p>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold text-gray-900">Contact Us</span>
+                <div className="mb-2">
+                  <span className="text-4xl font-bold text-gray-900">£299</span>
+                  <span className="text-gray-600 text-lg">/month</span>
                 </div>
+                <p className="text-sm font-semibold text-green-600">Clear roadmap to compliance</p>
               </div>
 
-              <ul className="space-y-4 mb-8 flex-1">
+              <ul className="space-y-3 mb-8 flex-1">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">1 User</span>
+                  <span className="text-gray-700">Quick-Start Audit (2-3 hours)</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Up to 5 frameworks</span>
+                  <span className="text-gray-700">60-minute consultation (Zoom)</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Basic reporting templates</span>
+                  <span className="text-gray-700">Current compliance assessment</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">PDF & Excel exports</span>
+                  <span className="text-gray-700">3-page action plan</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
                   <span className="text-gray-700">Email support</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <X className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-400">Advanced analytics</span>
+                  <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">Up to 5 users</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <X className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-400">API access</span>
+                  <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">Max 2 ESG frameworks</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <X className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-400">Dedicated support</span>
+                  <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">Basic Reporting</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">Standard data import</span>
                 </li>
               </ul>
 
               <button
-                onClick={() => handlePlanSelect('Starter')}
+                onClick={() => handlePlanSelect('Starter Package')}
                 className="w-full py-4 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold"
               >
                 Get Started
@@ -127,33 +133,34 @@ export default function PricingPage() {
               </div>
 
               <div className="mb-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Professional</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Professional Package</h3>
                 <p className="text-gray-600 mb-6">Ideal for growing companies with complex needs</p>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold text-gray-900">Contact Us</span>
+                <div className="mb-2">
+                  <span className="text-4xl font-bold text-gray-900">£899</span>
                 </div>
+                <p className="text-sm font-semibold text-blue-600">Complete compliance strategy</p>
               </div>
 
-              <ul className="space-y-4 mb-8 flex-1">
+              <ul className="space-y-3 mb-8 flex-1">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700 font-medium">Up to 10 users</span>
+                  <span className="text-gray-700 font-medium">Full ESG Roadmap</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700 font-medium">All frameworks (25+)</span>
+                  <span className="text-gray-700 font-medium">Comprehensive audit (6-12 hours)</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700 font-medium">Advanced reporting & analytics</span>
+                  <span className="text-gray-700 font-medium">Gap analysis vs. UK regulations</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700 font-medium">Branded PDF templates</span>
+                  <span className="text-gray-700 font-medium">12-month implementation plan</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700 font-medium">Bulk data import</span>
+                  <span className="text-gray-700 font-medium">Quarterly check-in calls (4 total)</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
@@ -161,16 +168,32 @@ export default function PricingPage() {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700 font-medium">Stakeholder-specific views</span>
+                  <span className="text-gray-700 font-medium">Up to 20 users</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <X className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-400">API access</span>
+                  <Check className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700 font-medium">Max 5 ESG Frameworks</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700 font-medium">AI-assisted reporting</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700 font-medium">API access</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700 font-medium">Advanced Analytics</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700 font-medium">Multi-site management</span>
                 </li>
               </ul>
 
               <button
-                onClick={() => handlePlanSelect('Professional')}
+                onClick={() => handlePlanSelect('Professional Package')}
                 className="w-full py-4 bg-gradient-to-r from-blue-600 to-green-600 text-white rounded-lg hover:from-blue-700 hover:to-green-700 transition-all font-semibold shadow-lg"
               >
                 Get Started
@@ -179,54 +202,170 @@ export default function PricingPage() {
 
             <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-8 flex flex-col">
               <div className="mb-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Enterprise</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Enterprise Package</h3>
                 <p className="text-gray-600 mb-6">For large organizations with custom requirements</p>
-                <div className="mb-6">
+                <div className="mb-2">
                   <span className="text-4xl font-bold text-gray-900">Custom</span>
                 </div>
+                <p className="text-sm font-semibold text-gray-900">Peace of mind + continuous compliance</p>
               </div>
 
-              <ul className="space-y-4 mb-8 flex-1">
+              <ul className="space-y-3 mb-8 flex-1">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Unlimited users</span>
+                  <span className="text-gray-700">Full ESG Roadmap</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">All frameworks + custom</span>
+                  <span className="text-gray-700">Comprehensive audit</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">White-label options</span>
+                  <span className="text-gray-700">Gap analysis vs. UK regulations</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">API access & integrations</span>
+                  <span className="text-gray-700">12-36 month implementation plan</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Dedicated account manager</span>
+                  <span className="text-gray-700">Dedicated ESG Reporting Manager</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">24/7 priority support</span>
+                  <span className="text-gray-700">Custom Integrations</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Custom training & onboarding</span>
+                  <span className="text-gray-700">Unlimited email support</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">Regulatory updates & alerts</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">Annual roadmap refresh</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
                   <span className="text-gray-700">SLA guarantees</span>
                 </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">Advanced analytics</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">On premise deployment option</span>
+                </li>
               </ul>
 
               <button
-                onClick={() => handlePlanSelect('Enterprise')}
+                onClick={() => handlePlanSelect('Enterprise Package')}
                 className="w-full py-4 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold"
               >
                 Contact Sales
               </button>
+            </div>
+          </div>
+
+          <div className="mt-16 bg-gradient-to-r from-green-700 via-green-600 to-emerald-600 rounded-2xl shadow-2xl border-2 border-green-500 p-8 md:p-12 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-1/3 h-full opacity-10">
+              <div className="absolute inset-0" style={{
+                backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px)',
+                backgroundSize: '20px 20px'
+              }}></div>
+            </div>
+
+            <div className="relative z-10">
+              <div className="flex flex-col md:flex-row items-center gap-8">
+                <div className="flex-shrink-0">
+                  <img
+                    src="/green-registry-icon1.png"
+                    alt="Green Registry Badge"
+                    className="w-32 h-32 md:w-40 md:h-40"
+                  />
+                </div>
+
+                <div className="flex-1 text-center md:text-left">
+                  <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-4">
+                    <Shield className="w-5 h-5 text-white" />
+                    <span className="text-white font-semibold text-sm">Verification & Certification</span>
+                  </div>
+                  <h3 className="text-3xl md:text-4xl font-bold text-white mb-3">
+                    ESG Sustainability Verification
+                  </h3>
+                  <p className="text-xl text-green-50 mb-6">
+                    Trust signal for customers
+                  </p>
+
+                  <div className="grid md:grid-cols-2 gap-6 mb-6">
+                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                      <div className="text-3xl font-bold text-white mb-2">£250</div>
+                      <div className="text-green-50 font-medium mb-4">One-Time Verification</div>
+                      <ul className="space-y-3 text-left">
+                        <li className="flex items-start gap-2 text-white">
+                          <Check className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                          <span className="text-sm">Official compliance verification</span>
+                        </li>
+                        <li className="flex items-start gap-2 text-white">
+                          <Check className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                          <span className="text-sm">Digital certification badge</span>
+                        </li>
+                        <li className="flex items-start gap-2 text-white">
+                          <Check className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                          <span className="text-sm">Public verification profile on GreenRegistry</span>
+                        </li>
+                        <li className="flex items-start gap-2 text-white">
+                          <Check className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                          <span className="text-sm">Marketing assets (badge, certificate)</span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                      <div className="text-3xl font-bold text-white mb-2">£150<span className="text-lg">/year</span></div>
+                      <div className="text-green-50 font-medium mb-4">Annual Recertification</div>
+                      <ul className="space-y-3 text-left">
+                        <li className="flex items-start gap-2 text-white">
+                          <Check className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                          <span className="text-sm">Ongoing verification maintenance</span>
+                        </li>
+                        <li className="flex items-start gap-2 text-white">
+                          <Check className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                          <span className="text-sm">Updated compliance check</span>
+                        </li>
+                        <li className="flex items-start gap-2 text-white">
+                          <Check className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                          <span className="text-sm">Renewed certification</span>
+                        </li>
+                        <li className="flex items-start gap-2 text-white">
+                          <Check className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                          <span className="text-sm">Maintained public profile</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                    <button
+                      onClick={() => handlePlanSelect('ESG Verification')}
+                      className="px-8 py-4 bg-white text-green-700 rounded-lg hover:bg-gray-100 transition-colors font-bold text-lg shadow-xl"
+                    >
+                      Get Verified
+                    </button>
+                    <a
+                      href="https://greenregistry.org"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-8 py-4 bg-white/20 backdrop-blur-sm text-white border-2 border-white rounded-lg hover:bg-white/30 transition-colors font-bold text-lg text-center"
+                    >
+                      View Sample Profile
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
