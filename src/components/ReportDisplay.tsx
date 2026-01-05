@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { marked } from 'marked';
 import { Download, Mail, Sparkles, Loader2, Phone } from 'lucide-react';
 import ProfessionalServicesModal from './ProfessionalServicesModal';
+import { supabase } from '../lib/supabase';
 
 interface ReportDisplayProps {
   reportMarkdown: string;
@@ -29,6 +30,37 @@ export default function ReportDisplay({
   const [showProfessionalModal, setShowProfessionalModal] = useState(false);
   const [hasScrolledHalfway, setHasScrolledHalfway] = useState(false);
   const [hasShownScrollModal, setHasShownScrollModal] = useState(false);
+  const [contactInfo, setContactInfo] = useState({
+    email: 'experts@esgreport.ai',
+    phone: '+44 20 1234 5678'
+  });
+
+  useEffect(() => {
+    loadContactInfo();
+  }, []);
+
+  const loadContactInfo = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('key, value')
+        .in('key', ['professional_services_email', 'contact_phone']);
+
+      if (error) throw error;
+
+      const settings: Record<string, string> = {};
+      data?.forEach(item => {
+        settings[item.key] = item.value;
+      });
+
+      setContactInfo({
+        email: settings.professional_services_email || 'experts@esgreport.ai',
+        phone: settings.contact_phone || '+44 20 1234 5678'
+      });
+    } catch (error) {
+      console.error('Error loading contact info:', error);
+    }
+  };
 
   useEffect(() => {
     if (reportMarkdown) {
@@ -811,18 +843,18 @@ export default function ReportDisplay({
                     <p className="text-base font-bold text-blue-900 mb-4">Contact our experts:</p>
                     <div className="flex flex-col sm:flex-row gap-4">
                       <a
-                        href="mailto:experts@esgReportAI.com"
+                        href={`mailto:${contactInfo.email}`}
                         className="flex-1 inline-flex items-center justify-center gap-3 px-6 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-md"
                       >
                         <Mail className="w-5 h-5" />
-                        experts@esgReportAI.com
+                        {contactInfo.email}
                       </a>
                       <a
-                        href="tel:+441322879713"
+                        href={`tel:${contactInfo.phone.replace(/\s/g, '')}`}
                         className="flex-1 inline-flex items-center justify-center gap-3 px-6 py-4 bg-white text-blue-600 border-2 border-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-semibold shadow-md"
                       >
                         <Phone className="w-5 h-5" />
-                        +44 (01322) 879 713
+                        {contactInfo.phone}
                       </a>
                     </div>
                   </div>

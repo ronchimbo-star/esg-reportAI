@@ -1,4 +1,6 @@
 import { X, Clock, AlertCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabase';
 
 interface RateLimitModalProps {
   isOpen: boolean;
@@ -15,6 +17,29 @@ export default function RateLimitModal({
   detailedMessage,
   minutesRemaining
 }: RateLimitModalProps) {
+  const [contactEmail, setContactEmail] = useState('experts@esgreport.ai');
+
+  useEffect(() => {
+    loadContactEmail();
+  }, []);
+
+  const loadContactEmail = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('value')
+        .eq('key', 'professional_services_email')
+        .maybeSingle();
+
+      if (error) throw error;
+      if (data) {
+        setContactEmail(data.value);
+      }
+    } catch (error) {
+      console.error('Error loading contact email:', error);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -84,7 +109,7 @@ export default function RateLimitModal({
                 expert analysis, and audit-ready documentation.
               </p>
               <a
-                href="mailto:experts@esgReportAI.com?subject=Unlimited Report Access"
+                href={`mailto:${contactEmail}?subject=Unlimited Report Access`}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
               >
                 Contact Experts

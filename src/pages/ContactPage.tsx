@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Mail, Phone, Send } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useNotification } from '../components/NotificationContext';
+import { supabase } from '../lib/supabase';
 
 export default function ContactPage() {
   const { showError } = useNotification();
@@ -14,6 +15,37 @@ export default function ContactPage() {
   });
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [contactInfo, setContactInfo] = useState({
+    email: 'info@esgreport.ai',
+    phone: '+44 20 1234 5678'
+  });
+
+  useEffect(() => {
+    loadContactInfo();
+  }, []);
+
+  const loadContactInfo = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('key, value')
+        .in('key', ['contact_email', 'contact_phone']);
+
+      if (error) throw error;
+
+      const settings: Record<string, string> = {};
+      data?.forEach(item => {
+        settings[item.key] = item.value;
+      });
+
+      setContactInfo({
+        email: settings.contact_email || 'info@esgreport.ai',
+        phone: settings.contact_phone || '+44 20 1234 5678'
+      });
+    } catch (error) {
+      console.error('Error loading contact info:', error);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,8 +95,8 @@ export default function ContactPage() {
                 <Mail className="w-6 h-6 text-green-600" />
               </div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">Email Us</h3>
-              <a href="mailto:hello@esgreportai.com" className="text-green-600 hover:text-green-700">
-                hello@esgreportai.com
+              <a href={`mailto:${contactInfo.email}`} className="text-green-600 hover:text-green-700">
+                {contactInfo.email}
               </a>
             </div>
 
@@ -73,8 +105,8 @@ export default function ContactPage() {
                 <Phone className="w-6 h-6 text-blue-600" />
               </div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">Call Us</h3>
-              <a href="tel:+441234567890" className="text-blue-600 hover:text-blue-700">
-                +44 (0) 123 456 7890
+              <a href={`tel:${contactInfo.phone.replace(/\s/g, '')}`} className="text-blue-600 hover:text-blue-700">
+                {contactInfo.phone}
               </a>
             </div>
           </div>

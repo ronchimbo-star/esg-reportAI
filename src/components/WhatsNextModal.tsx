@@ -1,4 +1,6 @@
 import { Mail, Sparkles, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabase';
 
 interface WhatsNextModalProps {
   isOpen: boolean;
@@ -13,6 +15,38 @@ export default function WhatsNextModal({
   onEmailReport,
   onEnhanceReport
 }: WhatsNextModalProps) {
+  const [contactInfo, setContactInfo] = useState({
+    email: 'experts@esgreport.ai',
+    phone: '+44 20 1234 5678'
+  });
+
+  useEffect(() => {
+    loadContactInfo();
+  }, []);
+
+  const loadContactInfo = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('key, value')
+        .in('key', ['professional_services_email', 'contact_phone']);
+
+      if (error) throw error;
+
+      const settings: Record<string, string> = {};
+      data?.forEach(item => {
+        settings[item.key] = item.value;
+      });
+
+      setContactInfo({
+        email: settings.professional_services_email || 'experts@esgreport.ai',
+        phone: settings.contact_phone || '+44 20 1234 5678'
+      });
+    } catch (error) {
+      console.error('Error loading contact info:', error);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -110,17 +144,17 @@ export default function WhatsNextModal({
               </p>
               <div className="flex flex-wrap gap-3">
                 <a
-                  href="mailto:experts@esgReportAI.com"
+                  href={`mailto:${contactInfo.email}`}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
                 >
                   <Mail className="w-4 h-4" />
-                  experts@esgReportAI.com
+                  {contactInfo.email}
                 </a>
                 <a
-                  href="tel:+441322879713"
+                  href={`tel:${contactInfo.phone.replace(/\s/g, '')}`}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-white text-blue-600 border-2 border-blue-600 rounded-lg hover:bg-blue-50 transition-colors text-sm font-medium"
                 >
-                  +44 (01322) 879 713
+                  {contactInfo.phone}
                 </a>
               </div>
             </div>
