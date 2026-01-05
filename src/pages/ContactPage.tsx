@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { Mail, Phone, Send } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { useNotification } from '../components/NotificationContext';
 
 export default function ContactPage() {
+  const { showError } = useNotification();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -33,7 +35,7 @@ export default function ContactPage() {
       }
     } catch (error) {
       console.error('Error sending message:', error);
-      alert('Failed to send message. Please try again or email us directly.');
+      showError('Failed to send message. Please try again or email us directly.');
     } finally {
       setSubmitting(false);
     }

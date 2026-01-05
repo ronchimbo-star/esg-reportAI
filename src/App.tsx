@@ -12,6 +12,7 @@ import Footer from './components/Footer';
 import { FormData, CompanyInfo, ESGData } from './types';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { generateReport } from './services/geminiService';
+import { useNotification } from './components/NotificationContext';
 
 const INITIAL_COMPANY_INFO: CompanyInfo = {
   name: '',
@@ -30,6 +31,7 @@ const INITIAL_ESG_DATA: ESGData = {
 };
 
 function App() {
+  const { showError, showSuccess } = useNotification();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useLocalStorage<FormData>('esg-form-data', {
     companyInfo: INITIAL_COMPANY_INFO,
@@ -86,7 +88,7 @@ function App() {
     if (validateStep(currentStep)) {
       setCurrentStep(currentStep + 1);
     } else {
-      alert('Please complete all required fields before proceeding.');
+      showError('Please complete all required fields before proceeding.');
     }
   };
 
@@ -96,7 +98,7 @@ function App() {
 
   const handleGenerateReport = async () => {
     if (!validateStep(1) || !validateStep(2) || !validateStep(3)) {
-      alert('Please complete all required fields before generating the report.');
+      showError('Please complete all required fields before generating the report.');
       return;
     }
 
@@ -175,7 +177,7 @@ function App() {
     } catch (error) {
       console.error('Error generating report:', error);
       setShowWhatsNextModal(false);
-      alert('Failed to generate report.\n\nREQUIRED: Google Gemini API Key\n\n1. Get your free API key at: https://makersuite.google.com/app/apikey\n2. Add it to the .env file: VITE_GEMINI_API_KEY=your_key_here\n3. Restart the dev server\n\nSee API_KEY_SETUP.md for detailed instructions.');
+      showError('Failed to generate report. Please check your API key configuration and try again.');
     } finally {
       setIsGenerating(false);
     }
@@ -183,7 +185,7 @@ function App() {
 
   const handleEmailReport = async () => {
     if (!reportMarkdown) {
-      alert('No report to send. Please generate a report first.');
+      showError('No report to send. Please generate a report first.');
       return;
     }
 
@@ -210,10 +212,10 @@ function App() {
         }),
       });
 
-      alert(`Report has been sent to ${formData.companyInfo.contactEmail}`);
+      showSuccess(`Report has been sent to ${formData.companyInfo.contactEmail}`);
     } catch (error) {
       console.error('Error sending email:', error);
-      alert('Failed to send email. Please try again.');
+      showError('Failed to send email. Please try again.');
     }
   };
 

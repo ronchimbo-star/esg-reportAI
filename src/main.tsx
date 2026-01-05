@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css';
 import RootWrapper from './components/RootWrapper';
+import { NotificationProvider } from './components/NotificationContext';
 
 const App = lazy(() => import('./App.tsx'));
 const AdminApp = lazy(() => import('./AdminApp.tsx'));
@@ -33,27 +34,29 @@ if (!rootElement.hasChildNodes()) {
   createRoot(rootElement).render(
     <StrictMode>
       <BrowserRouter>
-        <RootWrapper>
-          <Suspense fallback={<LoadingSpinner />}>
-            <Routes>
-              <Route path="/" element={<App />} />
-              <Route path="/admin/*" element={<AdminApp />} />
-              <Route path="/professional-services" element={<ProfessionalServicesPage />} />
-              <Route path="/pricing" element={<PricingPage />} />
-              <Route path="/resources" element={<ResourcesPage />} />
-              <Route path="/how-it-works" element={<HowItWorksPage />} />
-              <Route path="/esg-templates" element={<ESGTemplatesPage />} />
-              <Route path="/news" element={<NewsPage />} />
-              <Route path="/news/:slug" element={<CMSPage />} />
-              <Route path="/template/:slug" element={<CMSPage />} />
-              <Route path="/contact" element={<ContactPage />} />
-              <Route path="/about" element={<CMSPage />} />
-              <Route path="/privacy-policy" element={<CMSPage />} />
-              <Route path="/terms-of-service" element={<CMSPage />} />
-              <Route path="/cookie-policy" element={<CMSPage />} />
-            </Routes>
-          </Suspense>
-        </RootWrapper>
+        <NotificationProvider>
+          <RootWrapper>
+            <Suspense fallback={<LoadingSpinner />}>
+              <Routes>
+                <Route path="/" element={<App />} />
+                <Route path="/admin/*" element={<AdminApp />} />
+                <Route path="/professional-services" element={<ProfessionalServicesPage />} />
+                <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/resources" element={<ResourcesPage />} />
+                <Route path="/how-it-works" element={<HowItWorksPage />} />
+                <Route path="/esg-templates" element={<ESGTemplatesPage />} />
+                <Route path="/news" element={<NewsPage />} />
+                <Route path="/news/:slug" element={<CMSPage />} />
+                <Route path="/template/:slug" element={<CMSPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/about" element={<CMSPage />} />
+                <Route path="/privacy-policy" element={<CMSPage />} />
+                <Route path="/terms-of-service" element={<CMSPage />} />
+                <Route path="/cookie-policy" element={<CMSPage />} />
+              </Routes>
+            </Suspense>
+          </RootWrapper>
+        </NotificationProvider>
       </BrowserRouter>
     </StrictMode>
   );
