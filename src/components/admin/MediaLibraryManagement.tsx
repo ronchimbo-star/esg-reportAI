@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Search, Upload, Edit2, Trash2, X, Save, Loader2, Image as ImageIcon } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import { useLocalStorage } from '../../hooks/useLocalStorage';
 import Toast from './Toast';
 
 interface MediaFile {
@@ -20,6 +19,11 @@ interface MediaFile {
   uploaded_at: string;
 }
 
+interface AdminUser {
+  id: string;
+  user_id: string;
+}
+
 export default function MediaLibraryManagement() {
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,7 +31,7 @@ export default function MediaLibraryManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [editingFile, setEditingFile] = useState<MediaFile | null>(null);
   const [showEditor, setShowEditor] = useState(false);
-  const [adminUser] = useLocalStorage('adminUser', null);
+  const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const [formData, setFormData] = useState({
@@ -38,8 +42,28 @@ export default function MediaLibraryManagement() {
   });
 
   useEffect(() => {
+    loadAdminUser();
     loadMediaFiles();
   }, []);
+
+  const loadAdminUser = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase
+          .from('admin_users')
+          .select('id, user_id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (data) {
+          setAdminUser(data);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading admin user:', error);
+    }
+  };
 
   const loadMediaFiles = async () => {
     try {

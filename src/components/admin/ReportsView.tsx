@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Search, Download, Calendar, Mail, User, Building, Loader2, ChevronLeft, ChevronRight, Filter, Send, Archive, Trash2, StickyNote } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import { useLocalStorage } from '../../hooks/useLocalStorage';
 import NotesModal from './NotesModal';
 
 interface Report {
@@ -25,6 +24,11 @@ interface Report {
   admin_notes: string | null;
 }
 
+interface AdminUser {
+  id: string;
+  user_id: string;
+}
+
 const ITEMS_PER_PAGE = 20;
 
 export default function ReportsView() {
@@ -35,13 +39,36 @@ export default function ReportsView() {
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<'all' | 'new' | 'followed_up' | 'archived'>('all');
   const [showFilters, setShowFilters] = useState(false);
-  const [adminUser] = useLocalStorage('adminUser', null);
+  const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
   const [notesModalOpen, setNotesModalOpen] = useState(false);
   const [currentNotesReport, setCurrentNotesReport] = useState<Report | null>(null);
 
   useEffect(() => {
+    loadAdminUser();
+  }, []);
+
+  useEffect(() => {
     loadReports();
   }, [statusFilter]);
+
+  const loadAdminUser = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase
+          .from('admin_users')
+          .select('id, user_id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (data) {
+          setAdminUser(data);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading admin user:', error);
+    }
+  };
 
   const loadReports = async () => {
     try {

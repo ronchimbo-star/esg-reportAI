@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Search, Plus, Edit2, Trash2, Eye, Loader2, X, Save } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import { useLocalStorage } from '../../hooks/useLocalStorage';
 import Toast from './Toast';
 
 interface NewsArticle {
@@ -24,13 +23,18 @@ interface NewsArticle {
   updated_at: string;
 }
 
+interface AdminUser {
+  id: string;
+  user_id: string;
+}
+
 export default function NewsArticlesManagement() {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingArticle, setEditingArticle] = useState<NewsArticle | null>(null);
   const [showEditor, setShowEditor] = useState(false);
-  const [adminUser] = useLocalStorage('adminUser', null);
+  const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const [formData, setFormData] = useState({
@@ -50,8 +54,28 @@ export default function NewsArticlesManagement() {
   });
 
   useEffect(() => {
+    loadAdminUser();
     loadArticles();
   }, []);
+
+  const loadAdminUser = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase
+          .from('admin_users')
+          .select('id, user_id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (data) {
+          setAdminUser(data);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading admin user:', error);
+    }
+  };
 
   const loadArticles = async () => {
     try {
