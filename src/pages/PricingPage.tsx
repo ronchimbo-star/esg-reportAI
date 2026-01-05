@@ -36,6 +36,7 @@ export default function PricingPage() {
           ...formData,
           subject: `Pricing Inquiry - ${selectedPlan} Plan`,
           message: `Plan: ${selectedPlan}\n\n${formData.message}`,
+          form_source: 'pricing_page'
         }),
       });
 

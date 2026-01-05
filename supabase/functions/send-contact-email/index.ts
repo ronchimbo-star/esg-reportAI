@@ -12,6 +12,7 @@ interface ContactFormData {
   email: string;
   subject: string;
   message: string;
+  form_source?: string;
 }
 
 Deno.serve(async (req: Request) => {
@@ -23,7 +24,7 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const { name, email, subject, message }: ContactFormData = await req.json();
+    const { name, email, subject, message, form_source = 'contact_page' }: ContactFormData = await req.json();
 
     if (!name || !email || !subject || !message) {
       return new Response(
@@ -55,6 +56,7 @@ Deno.serve(async (req: Request) => {
         subject,
         message,
         ip_address: ipAddress,
+        form_source,
         status: "new",
       });
 
