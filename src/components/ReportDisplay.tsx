@@ -525,21 +525,27 @@ export default function ReportDisplay({
                 <p className="text-sm font-medium text-gray-700 mb-1">Company</p>
                 <p className="text-gray-900 font-semibold">{companyName}</p>
               </div>
-              <div>
-                <p className="text-sm font-medium text-gray-700 mb-1">Frameworks Applied</p>
-                <p className="text-gray-900 font-semibold">{frameworks.length} framework{frameworks.length > 1 ? 's' : ''}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-700 mb-1">Industries</p>
-                <p className="text-gray-900 font-semibold">{industries.join(', ')}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-700 mb-1">Operating Jurisdictions</p>
-                <p className="text-gray-900 font-semibold">
-                  {jurisdictions.slice(0, 3).join(', ')}
-                  {jurisdictions.length > 3 && ` +${jurisdictions.length - 3} more`}
-                </p>
-              </div>
+              {frameworks && frameworks.length > 0 && (
+                <div>
+                  <p className="text-sm font-medium text-gray-700 mb-1">Frameworks Applied</p>
+                  <p className="text-gray-900 font-semibold">{frameworks.length} framework{frameworks.length > 1 ? 's' : ''}</p>
+                </div>
+              )}
+              {industries && industries.length > 0 && (
+                <div>
+                  <p className="text-sm font-medium text-gray-700 mb-1">Industries</p>
+                  <p className="text-gray-900 font-semibold">{industries.join(', ')}</p>
+                </div>
+              )}
+              {jurisdictions && jurisdictions.length > 0 && (
+                <div>
+                  <p className="text-sm font-medium text-gray-700 mb-1">Operating Jurisdictions</p>
+                  <p className="text-gray-900 font-semibold">
+                    {jurisdictions.slice(0, 3).join(', ')}
+                    {jurisdictions.length > 3 && ` +${jurisdictions.length - 3} more`}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -751,7 +757,7 @@ export default function ReportDisplay({
 
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <button
-                      onClick={handleDownloadReport}
+                      onClick={handleDownload}
                       className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold shadow-lg"
                     >
                       <Download className="w-5 h-5" />
