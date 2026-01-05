@@ -130,24 +130,24 @@ export default function SiteSettings() {
       const { data: { user } } = await supabase.auth.getUser();
 
       const updates = [
-        { key: 'favicon_url', value: faviconUrl, updated_by: user?.id, updated_at: new Date().toISOString() },
-        { key: 'google_analytics_id', value: googleAnalyticsId, updated_by: user?.id, updated_at: new Date().toISOString() },
-        { key: 'contact_email', value: contactEmail, updated_by: user?.id, updated_at: new Date().toISOString() },
-        { key: 'contact_phone', value: contactPhone, updated_by: user?.id, updated_at: new Date().toISOString() },
-        { key: 'support_email', value: supportEmail, updated_by: user?.id, updated_at: new Date().toISOString() },
-        { key: 'enterprise_email', value: enterpriseEmail, updated_by: user?.id, updated_at: new Date().toISOString() },
-        { key: 'partnerships_email', value: partnershipsEmail, updated_by: user?.id, updated_at: new Date().toISOString() },
-        { key: 'social_linkedin', value: socialLinkedin, updated_by: user?.id, updated_at: new Date().toISOString() },
-        { key: 'social_twitter', value: socialTwitter, updated_by: user?.id, updated_at: new Date().toISOString() },
-        { key: 'social_facebook', value: socialFacebook, updated_by: user?.id, updated_at: new Date().toISOString() },
-        { key: 'site_meta_title', value: siteMetaTitle, updated_by: user?.id, updated_at: new Date().toISOString() },
-        { key: 'site_meta_description', value: siteMetaDescription, updated_by: user?.id, updated_at: new Date().toISOString() },
-        { key: 'site_meta_keywords', value: siteMetaKeywords, updated_by: user?.id, updated_at: new Date().toISOString() },
+        { key: 'favicon_url', value: faviconUrl, updated_by: user?.id },
+        { key: 'google_analytics_id', value: googleAnalyticsId, updated_by: user?.id },
+        { key: 'contact_email', value: contactEmail, updated_by: user?.id },
+        { key: 'contact_phone', value: contactPhone, updated_by: user?.id },
+        { key: 'support_email', value: supportEmail, updated_by: user?.id },
+        { key: 'enterprise_email', value: enterpriseEmail, updated_by: user?.id },
+        { key: 'partnerships_email', value: partnershipsEmail, updated_by: user?.id },
+        { key: 'social_linkedin', value: socialLinkedin, updated_by: user?.id },
+        { key: 'social_twitter', value: socialTwitter, updated_by: user?.id },
+        { key: 'social_facebook', value: socialFacebook, updated_by: user?.id },
+        { key: 'site_meta_title', value: siteMetaTitle, updated_by: user?.id },
+        { key: 'site_meta_description', value: siteMetaDescription, updated_by: user?.id },
+        { key: 'site_meta_keywords', value: siteMetaKeywords, updated_by: user?.id },
       ];
 
       const { error } = await supabase
         .from('site_settings')
-        .upsert(updates);
+        .upsert(updates, { onConflict: 'key' });
 
       if (error) throw error;
 
