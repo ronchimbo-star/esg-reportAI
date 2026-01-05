@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Search, Download, Calendar, Mail, User, Building, Loader2, ChevronLeft, ChevronRight, Filter, Send, Archive, Trash2, StickyNote } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import NotesModal from './NotesModal';
+import ConfirmDialog from '../ConfirmDialog';
 
 interface Report {
   id: string;
@@ -42,6 +43,8 @@ export default function ReportsView() {
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
   const [notesModalOpen, setNotesModalOpen] = useState(false);
   const [currentNotesReport, setCurrentNotesReport] = useState<Report | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [reportToDelete, setReportToDelete] = useState<{ id: string; companyName: string } | null>(null);
 
   useEffect(() => {
     loadAdminUser();
@@ -126,10 +129,13 @@ export default function ReportsView() {
     }
   };
 
-  const deleteReport = async (reportId: string, companyName: string) => {
-    if (!confirm(`Are you sure you want to delete the report for "${companyName}"? This will move it to the deleted folder.`)) {
-      return;
-    }
+  const promptDeleteReport = (reportId: string, companyName: string) => {
+    setReportToDelete({ id: reportId, companyName });
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDeleteReport = async () => {
+    if (!reportToDelete) return;
 
     try {
       const { error } = await supabase
@@ -138,11 +144,13 @@ export default function ReportsView() {
           deleted_at: new Date().toISOString(),
           deleted_by: adminUser?.id,
         })
-        .eq('id', reportId);
+        .eq('id', reportToDelete.id);
 
       if (error) throw error;
 
       await loadReports();
+      setDeleteConfirmOpen(false);
+      setReportToDelete(null);
     } catch (error) {
       console.error('Error deleting report:', error);
       alert('Failed to delete report. Please try again.');
@@ -280,6 +288,20 @@ export default function ReportsView() {
         companyName={currentNotesReport?.company_name || ''}
       />
 
+      <ConfirmDialog
+        isOpen={deleteConfirmOpen}
+        title="Delete Report"
+        message={`Are you sure you want to delete the report for "${reportToDelete?.companyName}"? This will move it to the deleted folder.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+        onConfirm={confirmDeleteReport}
+        onCancel={() => {
+          setDeleteConfirmOpen(false);
+          setReportToDelete(null);
+        }}
+      />
+
       <div className="space-y-4 sm:space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
@@ -412,7 +434,7 @@ export default function ReportsView() {
                       {report.admin_notes ? 'Edit Notes' : 'Add Notes'}
                     </button>
                     <button
-                      onClick={() => deleteReport(report.id, report.company_name)}
+                      onClick={() => promptDeleteReport(report.id, report.company_name)}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium border border-red-200"
                     >
                       <Trash2 className="w-4 h-4" />

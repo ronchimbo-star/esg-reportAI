@@ -93,8 +93,8 @@ export default function AnalyticsDashboard() {
       firstOfMonth.setHours(0, 0, 0, 0);
 
       const [reports, reportsThisMonth, pageViews, pageViewsThisMonth, downloads, downloadsThisMonth, users, usersThisMonth] = await Promise.allSettled([
-        supabase.from('generated_reports').select('id', { count: 'exact', head: true }),
-        supabase.from('generated_reports').select('id', { count: 'exact', head: true }).gte('created_at', firstOfMonth.toISOString()),
+        supabase.from('generated_reports').select('id', { count: 'exact', head: true }).is('deleted_at', null),
+        supabase.from('generated_reports').select('id', { count: 'exact', head: true }).is('deleted_at', null).gte('created_at', firstOfMonth.toISOString()),
         supabase.from('page_views').select('id', { count: 'exact', head: true }),
         supabase.from('page_views').select('id', { count: 'exact', head: true }).gte('created_at', firstOfMonth.toISOString()),
         supabase.from('template_downloads').select('id', { count: 'exact', head: true }),
@@ -139,6 +139,7 @@ export default function AnalyticsDashboard() {
       const { data, error } = await supabase
         .from('generated_reports')
         .select('industries')
+        .is('deleted_at', null)
         .gte('created_at', dateFilter);
 
       if (error || !data) {
@@ -170,6 +171,7 @@ export default function AnalyticsDashboard() {
       const { data, error } = await supabase
         .from('generated_reports')
         .select('frameworks')
+        .is('deleted_at', null)
         .gte('created_at', dateFilter);
 
       if (error || !data) {
@@ -201,8 +203,9 @@ export default function AnalyticsDashboard() {
       const { data, error } = await supabase
         .from('generated_reports')
         .select('created_at')
+        .is('deleted_at', null)
         .gte('created_at', dateFilter)
-        .order('created_at', { ascending: true });
+        .order('created_at', { ascending: true});
 
       if (error || !data) {
         setReportTrends([]);
