@@ -27,7 +27,7 @@ interface NavigationArticle {
 }
 
 export default function CMSPage() {
-  const { slug } = useParams();
+  const { slug: slugParam } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const [page, setPage] = useState<PageData | null>(null);
@@ -39,6 +39,8 @@ export default function CMSPage() {
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [previousArticle, setPreviousArticle] = useState<NavigationArticle | null>(null);
   const [nextArticle, setNextArticle] = useState<NavigationArticle | null>(null);
+
+  const slug = slugParam || location.pathname.replace(/^\//, '');
 
   useEffect(() => {
     loadPage();
