@@ -240,7 +240,6 @@ export default function CMSPage() {
                 url={currentUrl}
                 title={page.title}
                 description={page.excerpt}
-                position="top"
               />
 
               <div className="hidden lg:block fixed left-8 top-1/2 -translate-y-1/2 z-10">
@@ -249,7 +248,6 @@ export default function CMSPage() {
                     url={currentUrl}
                     title={page.title}
                     description={page.excerpt}
-                    position="middle"
                     layout="vertical"
                   />
                 </div>
@@ -282,7 +280,6 @@ export default function CMSPage() {
               url={currentUrl}
               title={page.title}
               description={page.excerpt}
-              position="bottom"
             />
           )}
 

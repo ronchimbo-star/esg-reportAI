@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Ban, Plus, Trash2, Shield, Loader2, AlertCircle } from 'lucide-react';
+import { Ban, Plus, Trash2, Shield, Loader2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import Toast from './Toast';
 

@@ -5,11 +5,10 @@ interface ShareButtonsProps {
   url: string;
   title: string;
   description?: string;
-  position?: 'top' | 'middle' | 'bottom';
   layout?: 'horizontal' | 'vertical';
 }
 
-export default function ShareButtons({ url, title, description, position = 'top', layout = 'horizontal' }: ShareButtonsProps) {
+export default function ShareButtons({ url, title, description, layout = 'horizontal' }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
 
   const encodedUrl = encodeURIComponent(url);

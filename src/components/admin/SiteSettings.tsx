@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Upload, Image as ImageIcon, Save, BarChart3, Mail, Phone, Share2, Search } from 'lucide-react';
+import { Upload, Image as ImageIcon, Save, BarChart3, Mail, Share2, Search } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import Toast from './Toast';
 

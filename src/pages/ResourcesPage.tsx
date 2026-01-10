@@ -3,7 +3,6 @@ import { BookOpen, Newspaper, Mail, ExternalLink, TrendingUp, HelpCircle } from 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useState } from 'react';
-import { supabase } from '../lib/supabase';
 
 export default function ResourcesPage() {
   const [email, setEmail] = useState('');

@@ -100,7 +100,7 @@ export default function MediaLibraryManagement() {
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
         const filePath = `site-assets/${fileName}`;
 
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from('site-assets')
           .upload(filePath, file);
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { marked } from 'marked';
-import { Download, Mail, Sparkles, Loader2, Phone } from 'lucide-react';
+import { Download, Mail, Sparkles, Phone } from 'lucide-react';
 import ProfessionalServicesModal from './ProfessionalServicesModal';
 import { supabase } from '../lib/supabase';
 

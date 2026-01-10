@@ -1,10 +1,9 @@
-import { useEffect, useState, memo, useMemo } from 'react';
+import { useEffect, useState, memo } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Linkedin, Twitter, Facebook } from 'lucide-react';
+import { Linkedin, Twitter, Facebook } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 function Footer() {
-  const currentYear = useMemo(() => new Date().getFullYear(), []);
   const [settings, setSettings] = useState<Record<string, string>>({});
 
   useEffect(() => {

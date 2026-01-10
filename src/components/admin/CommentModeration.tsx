@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MessageCircle, Check, X, Edit2, Trash2, Search, Filter, Star } from 'lucide-react';
+import { MessageCircle, Check, X, Edit2, Trash2, Search, Star } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import Toast from './Toast';
 
