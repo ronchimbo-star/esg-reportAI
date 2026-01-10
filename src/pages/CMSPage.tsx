@@ -192,7 +192,7 @@ export default function CMSPage() {
     );
   }
 
-  const isFullWidthPage = slug === 'pro-services';
+  const isFullWidthPage = slug === 'professional-services';
 
   return (
     <div className="min-h-screen flex flex-col">
