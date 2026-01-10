@@ -186,7 +186,7 @@ export default function CommentModeration() {
   const filteredComments = comments.filter((comment) => {
     const search = searchTerm.toLowerCase();
     return (
-      comment.comment_text.toLowerCase().includes(search) ||
+      comment.comment_text?.toLowerCase().includes(search) ||
       comment.user_name?.toLowerCase().includes(search) ||
       comment.user_email?.toLowerCase().includes(search) ||
       comment.template_title?.toLowerCase().includes(search)

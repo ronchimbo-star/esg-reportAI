@@ -212,9 +212,9 @@ export default function NewsArticlesManagement() {
   const filteredArticles = articles.filter((article) => {
     const search = searchTerm.toLowerCase();
     return (
-      article.title.toLowerCase().includes(search) ||
+      article.title?.toLowerCase().includes(search) ||
       article.excerpt?.toLowerCase().includes(search) ||
-      article.slug.toLowerCase().includes(search)
+      article.slug?.toLowerCase().includes(search)
     );
   });
 

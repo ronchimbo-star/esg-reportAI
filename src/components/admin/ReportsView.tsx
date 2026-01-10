@@ -188,10 +188,10 @@ export default function ReportsView() {
   const filteredReports = reports.filter((report) => {
     const search = searchTerm.toLowerCase();
     return (
-      report.company_name.toLowerCase().includes(search) ||
+      report.company_name?.toLowerCase().includes(search) ||
       report.user_email?.toLowerCase().includes(search) ||
-      report.user_ip.includes(search) ||
-      report.industries.some((i) => i.toLowerCase().includes(search)) ||
+      report.user_ip?.includes(search) ||
+      report.industries?.some((i) => i?.toLowerCase().includes(search)) ||
       report.admin_notes?.toLowerCase().includes(search)
     );
   });

@@ -235,7 +235,7 @@ export default function MediaLibraryManagement() {
   const filteredFiles = mediaFiles.filter((file) => {
     const search = searchTerm.toLowerCase();
     return (
-      file.file_name.toLowerCase().includes(search) ||
+      file.file_name?.toLowerCase().includes(search) ||
       file.alt_text?.toLowerCase().includes(search) ||
       file.title?.toLowerCase().includes(search)
     );

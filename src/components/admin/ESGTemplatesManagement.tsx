@@ -257,9 +257,9 @@ export default function ESGTemplatesManagement() {
   const filteredTemplates = templates.filter((template) => {
     const search = searchTerm.toLowerCase();
     return (
-      template.title.toLowerCase().includes(search) ||
+      template.title?.toLowerCase().includes(search) ||
       template.description?.toLowerCase().includes(search) ||
-      template.slug.toLowerCase().includes(search) ||
+      template.slug?.toLowerCase().includes(search) ||
       template.category?.toLowerCase().includes(search)
     );
   });
