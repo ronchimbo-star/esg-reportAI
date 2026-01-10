@@ -41,6 +41,7 @@ if (!rootElement.hasChildNodes()) {
                 <Route path="/" element={<App />} />
                 <Route path="/admin/*" element={<AdminApp />} />
                 <Route path="/professional-services" element={<ProfessionalServicesPage />} />
+                <Route path="/pro-services" element={<CMSPage />} />
                 <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/resources" element={<ResourcesPage />} />
                 <Route path="/how-it-works" element={<HowItWorksPage />} />
