@@ -83,22 +83,23 @@ export default function ESGTemplatesManagement() {
   const loadTemplates = async () => {
     try {
       setLoading(true);
-      let query = supabase
+      const { data, error } = await supabase
         .from('esg_templates')
         .select('*')
         .order('created_at', { ascending: false });
 
+      if (error) throw error;
+
+      let filteredData = data || [];
       if (!showArchived) {
-        query = query.is('archived_at', null);
+        filteredData = filteredData.filter(template => !template.archived_at);
       }
 
-      const { data, error } = await query;
-
-      if (error) throw error;
-      setTemplates(data || []);
+      setTemplates(filteredData);
     } catch (error) {
       console.error('Error loading templates:', error);
       showToast('Failed to load templates', 'error');
+      setTemplates([]);
     } finally {
       setLoading(false);
     }

@@ -67,6 +67,82 @@ export default function PricingPage() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="mt-8 mb-16 bg-gradient-to-r from-blue-600 via-green-600 to-emerald-600 rounded-2xl shadow-2xl border-2 border-blue-500 p-8 md:p-12 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-1/3 h-full opacity-10">
+              <div className="absolute inset-0" style={{
+                backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px)',
+                backgroundSize: '20px 20px'
+              }}></div>
+            </div>
+
+            <div className="relative z-10">
+              <div className="flex flex-col md:flex-row items-center gap-8">
+                <div className="flex-shrink-0">
+                  <img
+                    src="/esgreport-icon.png"
+                    alt="ESG Report Badge"
+                    className="w-32 h-32 md:w-40 md:h-40"
+                  />
+                </div>
+
+                <div className="flex-1 text-center md:text-left">
+                  <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-4">
+                    <span className="text-white font-semibold text-sm">Free Forever</span>
+                  </div>
+                  <h3 className="text-3xl md:text-4xl font-bold text-white mb-3">
+                    AI-Powered ESG Report Generation
+                  </h3>
+                  <p className="text-xl text-blue-50 mb-6">
+                    Get started with unlimited free reports
+                  </p>
+
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 mb-6">
+                    <ul className="space-y-3 text-left">
+                      <li className="flex items-start gap-2 text-white">
+                        <Check className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                        <span>Unlimited AI-assisted ESG reports</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-white">
+                        <Check className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                        <span>Support for 25+ global frameworks</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-white">
+                        <Check className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                        <span>Automated GHG Protocol calculations</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-white">
+                        <Check className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                        <span>PDF & Excel export</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-white">
+                        <Check className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                        <span>No credit card required</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                    <a
+                      href="/"
+                      className="px-8 py-4 bg-white text-blue-700 rounded-lg hover:bg-gray-100 transition-colors font-bold text-lg shadow-xl text-center"
+                    >
+                      Start Free Now
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">
+              Professional Services & Support
+            </h2>
+            <p className="text-lg text-gray-600">
+              Upgrade for expert-led consulting and dedicated support
+            </p>
+          </div>
+
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-8 flex flex-col">
               <div className="mb-8">
@@ -138,6 +214,7 @@ export default function PricingPage() {
                 <p className="text-gray-600 mb-6">Ideal for growing companies with complex needs</p>
                 <div className="mb-2">
                   <span className="text-4xl font-bold text-gray-900">£899</span>
+                  <span className="text-gray-600 text-lg">/month</span>
                 </div>
                 <p className="text-sm font-semibold text-blue-600">Complete compliance strategy</p>
               </div>

@@ -16,7 +16,7 @@ function Footer() {
       const { data, error } = await supabase
         .from('site_settings')
         .select('key, value')
-        .in('key', ['contact_email', 'support_email', 'social_linkedin', 'social_twitter', 'social_facebook']);
+        .in('key', ['contact_email', 'support_email', 'social_linkedin', 'social_twitter', 'social_facebook', 'footer_tagline']);
 
       if (error) throw error;
 
@@ -39,7 +39,7 @@ function Footer() {
               <img src="/esgreport-logo-dark.png" alt="ESG Report AI" className="h-12" />
             </div>
             <p className="text-sm mb-4">
-              Free AI-powered ESG report generation aligned with global standards.
+              {settings.footer_tagline || 'Free AI-powered ESG report generation aligned with global standards.'}
             </p>
             <div className="flex gap-3">
               {settings.social_linkedin && (

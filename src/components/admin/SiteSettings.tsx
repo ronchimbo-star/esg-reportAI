@@ -17,6 +17,7 @@ export default function SiteSettings() {
   const [siteMetaTitle, setSiteMetaTitle] = useState('');
   const [siteMetaDescription, setSiteMetaDescription] = useState('');
   const [siteMetaKeywords, setSiteMetaKeywords] = useState('');
+  const [footerTagline, setFooterTagline] = useState('');
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -72,6 +73,9 @@ export default function SiteSettings() {
               break;
             case 'site_meta_keywords':
               setSiteMetaKeywords(setting.value || '');
+              break;
+            case 'footer_tagline':
+              setFooterTagline(setting.value || '');
               break;
           }
         });
@@ -143,6 +147,7 @@ export default function SiteSettings() {
         { key: 'site_meta_title', value: siteMetaTitle, updated_by: user?.id },
         { key: 'site_meta_description', value: siteMetaDescription, updated_by: user?.id },
         { key: 'site_meta_keywords', value: siteMetaKeywords, updated_by: user?.id },
+        { key: 'footer_tagline', value: footerTagline, updated_by: user?.id },
       ];
 
       const { error } = await supabase
@@ -412,6 +417,35 @@ export default function SiteSettings() {
               placeholder="https://facebook.com/esgreportai"
             />
           </div>
+        </div>
+      </div>
+
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+            <ImageIcon className="w-5 h-5 text-blue-600" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">Footer Content</h3>
+            <p className="text-sm text-gray-600">Customize text displayed in the footer</p>
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Footer Tagline
+          </label>
+          <input
+            type="text"
+            value={footerTagline}
+            onChange={(e) => setFooterTagline(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            placeholder="Free AI-powered ESG report generation aligned with global standards."
+            maxLength={200}
+          />
+          <p className="mt-1 text-sm text-gray-500">
+            Text displayed below the logo in the footer ({footerTagline.length}/200 characters)
+          </p>
         </div>
       </div>
 

@@ -92,26 +92,29 @@ export default function AnalyticsDashboard() {
       firstOfMonth.setDate(1);
       firstOfMonth.setHours(0, 0, 0, 0);
 
-      const [reports, reportsThisMonth, pageViews, pageViewsThisMonth, downloads, downloadsThisMonth, users, usersThisMonth] = await Promise.allSettled([
-        supabase.from('generated_reports').select('id', { count: 'exact', head: true }).is('deleted_at', null),
-        supabase.from('generated_reports').select('id', { count: 'exact', head: true }).is('deleted_at', null).gte('created_at', firstOfMonth.toISOString()),
+      const { data: allReports } = await supabase
+        .from('generated_reports')
+        .select('created_at, deleted_at');
+
+      const activeReports = (allReports || []).filter(r => !r.deleted_at);
+      const reportsThisMonth = activeReports.filter(r => new Date(r.created_at) >= firstOfMonth);
+
+      const [pageViews, pageViewsThisMonth, downloads, downloadsThisMonth] = await Promise.allSettled([
         supabase.from('page_views').select('id', { count: 'exact', head: true }),
         supabase.from('page_views').select('id', { count: 'exact', head: true }).gte('created_at', firstOfMonth.toISOString()),
         supabase.from('template_downloads').select('id', { count: 'exact', head: true }),
         supabase.from('template_downloads').select('id', { count: 'exact', head: true }).gte('downloaded_at', firstOfMonth.toISOString()),
-        supabase.from('user_profiles').select('id', { count: 'exact', head: true }),
-        supabase.from('user_profiles').select('id', { count: 'exact', head: true }).gte('created_at', firstOfMonth.toISOString()),
       ]);
 
       setStats({
-        totalReports: reports.status === 'fulfilled' ? (reports.value.count || 0) : 0,
-        reportsThisMonth: reportsThisMonth.status === 'fulfilled' ? (reportsThisMonth.value.count || 0) : 0,
+        totalReports: activeReports.length,
+        reportsThisMonth: reportsThisMonth.length,
         totalPageViews: pageViews.status === 'fulfilled' ? (pageViews.value.count || 0) : 0,
         pageViewsThisMonth: pageViewsThisMonth.status === 'fulfilled' ? (pageViewsThisMonth.value.count || 0) : 0,
         totalDownloads: downloads.status === 'fulfilled' ? (downloads.value.count || 0) : 0,
         downloadsThisMonth: downloadsThisMonth.status === 'fulfilled' ? (downloadsThisMonth.value.count || 0) : 0,
-        totalUsers: users.status === 'fulfilled' ? (users.value.count || 0) : 0,
-        usersThisMonth: usersThisMonth.status === 'fulfilled' ? (usersThisMonth.value.count || 0) : 0,
+        totalUsers: 0,
+        usersThisMonth: 0,
       });
     } catch (error) {
       console.error('Error loading dashboard stats:', error);
@@ -138,8 +141,7 @@ export default function AnalyticsDashboard() {
       const dateFilter = getDateFilter();
       const { data, error } = await supabase
         .from('generated_reports')
-        .select('industries')
-        .is('deleted_at', null)
+        .select('industries, deleted_at')
         .gte('created_at', dateFilter);
 
       if (error || !data) {
@@ -147,8 +149,10 @@ export default function AnalyticsDashboard() {
         return;
       }
 
+      const activeReports = data.filter(r => !r.deleted_at);
+
       const industryCounts: Record<string, number> = {};
-      data.forEach(report => {
+      activeReports.forEach(report => {
         report.industries?.forEach((industry: string) => {
           industryCounts[industry] = (industryCounts[industry] || 0) + 1;
         });
@@ -170,8 +174,7 @@ export default function AnalyticsDashboard() {
       const dateFilter = getDateFilter();
       const { data, error } = await supabase
         .from('generated_reports')
-        .select('frameworks')
-        .is('deleted_at', null)
+        .select('frameworks, deleted_at')
         .gte('created_at', dateFilter);
 
       if (error || !data) {
@@ -179,8 +182,10 @@ export default function AnalyticsDashboard() {
         return;
       }
 
+      const activeReports = data.filter(r => !r.deleted_at);
+
       const frameworkCounts: Record<string, number> = {};
-      data.forEach(report => {
+      activeReports.forEach(report => {
         report.frameworks?.forEach((framework: string) => {
           frameworkCounts[framework] = (frameworkCounts[framework] || 0) + 1;
         });
@@ -202,8 +207,7 @@ export default function AnalyticsDashboard() {
       const dateFilter = getDateFilter();
       const { data, error } = await supabase
         .from('generated_reports')
-        .select('created_at')
-        .is('deleted_at', null)
+        .select('created_at, deleted_at')
         .gte('created_at', dateFilter)
         .order('created_at', { ascending: true});
 
@@ -212,8 +216,10 @@ export default function AnalyticsDashboard() {
         return;
       }
 
+      const activeReports = data.filter(r => !r.deleted_at);
+
       const dateCounts: Record<string, number> = {};
-      data.forEach(report => {
+      activeReports.forEach(report => {
         const date = new Date(report.created_at).toISOString().split('T')[0];
         dateCounts[date] = (dateCounts[date] || 0) + 1;
       });
