@@ -76,23 +76,24 @@ export default function ReportsView() {
   const loadReports = async () => {
     try {
       setLoading(true);
-      let query = supabase
+      const { data, error } = await supabase
         .from('generated_reports')
         .select('*')
-        .is('deleted_at', null)
         .order('created_at', { ascending: false });
 
+      if (error) throw error;
+
+      let filteredData = (data || []).filter(r => !r.deleted_at);
+
       if (statusFilter !== 'all') {
-        query = query.eq('status', statusFilter);
+        filteredData = filteredData.filter(r => r.status === statusFilter);
       }
 
-      const { data, error } = await query;
-
-      if (error) throw error;
-      setReports(data || []);
+      setReports(filteredData);
       setCurrentPage(1);
     } catch (error) {
       console.error('Error loading reports:', error);
+      setReports([]);
     } finally {
       setLoading(false);
     }

@@ -36,28 +36,30 @@ export default function CommentModeration() {
     try {
       setLoading(true);
 
-      let query = supabase
+      const { data: commentsData, error: commentsError } = await supabase
         .from('template_comments')
-        .select(`
-          *,
-          esg_templates!template_comments_template_id_fkey (
-            title
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
+      if (commentsError) throw commentsError;
+
+      const { data: templatesData } = await supabase
+        .from('esg_templates')
+        .select('id, title');
+
+      const templatesMap = new Map(
+        (templatesData || []).map(t => [t.id, t.title])
+      );
+
+      let filteredComments = commentsData || [];
       if (filterStatus === 'pending') {
-        query = query.eq('is_approved', false);
+        filteredComments = filteredComments.filter(c => !c.is_approved);
       } else if (filterStatus === 'approved') {
-        query = query.eq('is_approved', true);
+        filteredComments = filteredComments.filter(c => c.is_approved);
       }
 
-      const { data, error } = await query;
-
-      if (error) throw error;
-
       const commentsWithDetails = await Promise.all(
-        (data || []).map(async (comment: any) => {
+        filteredComments.map(async (comment: any) => {
           const { count } = await supabase
             .from('comment_likes')
             .select('id', { count: 'exact', head: true })
@@ -65,7 +67,7 @@ export default function CommentModeration() {
 
           return {
             ...comment,
-            template_title: comment.esg_templates?.title,
+            template_title: templatesMap.get(comment.template_id) || 'Unknown Template',
             likes_count: count || 0
           };
         })
@@ -75,6 +77,7 @@ export default function CommentModeration() {
     } catch (error) {
       console.error('Error loading comments:', error);
       showToast('Failed to load comments', 'error');
+      setComments([]);
     } finally {
       setLoading(false);
     }

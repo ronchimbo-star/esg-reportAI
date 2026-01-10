@@ -44,13 +44,14 @@ export default function TemplateComments({ templateId, currentUserId }: Template
         .select('*')
         .eq('template_id', templateId)
         .eq('is_approved', true)
-        .is('parent_comment_id', null)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
+      const topLevelComments = (data || []).filter(c => !c.parent_comment_id);
+
       const commentsWithDetails = await Promise.all(
-        (data || []).map(async (comment) => {
+        topLevelComments.map(async (comment) => {
           const [likesResult, repliesResult] = await Promise.all([
             supabase
               .from('comment_likes')
