@@ -102,12 +102,12 @@ export default function ProfessionalServicesModal({ isOpen, onClose }: Professio
 
             <div className="flex flex-col sm:flex-row gap-4">
               <a
-                href="https://esgreport.co.uk"
+                href="https://esgreportai.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-4 bg-white text-blue-900 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
-                Visit esgReport.co.uk
+                Visit esgReportAI.com
                 <ExternalLink className="w-5 h-5" />
               </a>
               <button
