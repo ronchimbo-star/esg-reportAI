@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import { supabase } from './lib/supabase';
+import { ToastProvider } from './components/admin/ToastContainer';
 
 export default function AdminApp() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -76,9 +77,13 @@ export default function AdminApp() {
     );
   }
 
-  if (!isAuthenticated) {
-    return <AdminLogin onLoginSuccess={handleLoginSuccess} />;
-  }
-
-  return <AdminDashboard onLogout={handleLogout} />;
+  return (
+    <ToastProvider>
+      {!isAuthenticated ? (
+        <AdminLogin onLoginSuccess={handleLoginSuccess} />
+      ) : (
+        <AdminDashboard onLogout={handleLogout} />
+      )}
+    </ToastProvider>
+  );
 }

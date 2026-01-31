@@ -3,6 +3,7 @@ import { Search, Download, Calendar, Mail, User, Building, Loader2, ChevronLeft,
 import { supabase } from '../../lib/supabase';
 import NotesModal from './NotesModal';
 import ConfirmDialog from '../ConfirmDialog';
+import { useToast } from './ToastContainer';
 
 interface Report {
   id: string;
@@ -33,6 +34,7 @@ interface AdminUser {
 const ITEMS_PER_PAGE = 20;
 
 export default function ReportsView() {
+  const toast = useToast();
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -135,7 +137,7 @@ export default function ReportsView() {
 
     if (!adminUser) {
       console.error('[ReportsView] Cannot update status: Admin user not loaded');
-      alert('Error: Admin user not loaded. Please refresh the page.');
+      toast.error('Admin User Not Loaded', 'Please refresh the page and try again.');
       return;
     }
 
@@ -168,7 +170,8 @@ export default function ReportsView() {
 
       console.log('[ReportsView] Report updated successfully:', data);
       await loadReports();
-      alert(`Report status updated to ${newStatus}`);
+      const statusLabel = newStatus === 'followed_up' ? 'Followed Up' : newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+      toast.success('Report Updated', `Status changed to ${statusLabel}`);
     } catch (error: any) {
       console.error('[ReportsView] Error updating report status:', {
         error,
@@ -177,7 +180,7 @@ export default function ReportsView() {
         hint: error?.hint,
         code: error?.code
       });
-      alert(`Failed to update report status: ${error?.message || 'Unknown error'}. Check console for details.`);
+      toast.error('Update Failed', error?.message || 'Unknown error occurred. Check console for details.');
     } finally {
       setActionLoading(null);
     }
@@ -203,7 +206,7 @@ export default function ReportsView() {
 
     if (!adminUser) {
       console.error('[ReportsView] Cannot delete: Admin user not loaded');
-      alert('Error: Admin user not loaded. Please refresh the page.');
+      toast.error('Admin User Not Loaded', 'Please refresh the page and try again.');
       return;
     }
 
@@ -229,7 +232,7 @@ export default function ReportsView() {
       await loadReports();
       setDeleteConfirmOpen(false);
       setReportToDelete(null);
-      alert('Report deleted successfully');
+      toast.success('Report Deleted', 'The report has been moved to deleted items.');
     } catch (error: any) {
       console.error('[ReportsView] Error deleting report:', {
         error,
@@ -238,7 +241,7 @@ export default function ReportsView() {
         hint: error?.hint,
         code: error?.code
       });
-      alert(`Failed to delete report: ${error?.message || 'Unknown error'}. Check console for details.`);
+      toast.error('Delete Failed', error?.message || 'Unknown error occurred. Check console for details.');
     } finally {
       setActionLoading(null);
     }
@@ -264,7 +267,7 @@ export default function ReportsView() {
 
       console.log('[ReportsView] Notes updated successfully:', data);
       await loadReports();
-      alert('Notes updated successfully');
+      toast.success('Notes Updated', 'Admin notes have been saved.');
     } catch (error: any) {
       console.error('[ReportsView] Error updating notes:', {
         error,
@@ -273,7 +276,7 @@ export default function ReportsView() {
         hint: error?.hint,
         code: error?.code
       });
-      alert(`Failed to update notes: ${error?.message || 'Unknown error'}. Check console for details.`);
+      toast.error('Update Failed', error?.message || 'Unknown error occurred. Check console for details.');
     } finally {
       setActionLoading(null);
     }
@@ -358,7 +361,7 @@ export default function ReportsView() {
 
     console.log('[ReportsView] Test results:\n', results);
     setTestResults(results);
-    alert('Test complete! Check the test results panel and console.');
+    toast.info('Permission Test Complete', 'Check the test results panel below for details.');
   };
 
   const filteredReports = reports.filter((report) => {
@@ -423,9 +426,10 @@ export default function ReportsView() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       console.log('[ReportsView] Report downloaded successfully');
+      toast.success('Download Complete', `${report.company_name} report has been downloaded.`);
     } catch (error: any) {
       console.error('[ReportsView] Error downloading report:', error);
-      alert(`Failed to download report: ${error?.message || 'Unknown error'}`);
+      toast.error('Download Failed', error?.message || 'Unknown error occurred.');
     }
   };
 
