@@ -16,33 +16,45 @@ async function sendEmail(to: string, subject: string, html: string, text?: strin
   const resendApiKey = Deno.env.get("RESEND_API_KEY");
 
   if (!resendApiKey) {
-    console.error("RESEND_API_KEY not configured");
-    return { success: false, error: "Email service not configured" };
+    console.error("RESEND_API_KEY not configured - please add it to Supabase secrets");
+    console.log("To add: supabase secrets set RESEND_API_KEY=your_key_here");
+    return { success: false, error: "RESEND_API_KEY not configured" };
   }
 
+  console.log("Attempting to send email to:", to);
+  console.log("Subject:", subject);
+
   try {
+    const emailPayload = {
+      from: "ESG Report AI <onboarding@resend.dev>",
+      to: [to],
+      subject: subject,
+      html: html,
+      text: text || undefined,
+    };
+
+    console.log("Email payload:", JSON.stringify(emailPayload, null, 2));
+
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${resendApiKey}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        from: "ESG Report AI <notifications@esgreportai.com>",
-        to: [to],
-        subject: subject,
-        html: html,
-        text: text || undefined,
-      }),
+      body: JSON.stringify(emailPayload),
     });
 
+    const responseText = await response.text();
+    console.log("Resend API response status:", response.status);
+    console.log("Resend API response:", responseText);
+
     if (!response.ok) {
-      const error = await response.text();
-      console.error("Resend API error:", error);
-      return { success: false, error: `Email service error: ${error}` };
+      console.error("Resend API error:", responseText);
+      return { success: false, error: `Email service error: ${responseText}` };
     }
 
-    const result = await response.json();
+    const result = JSON.parse(responseText);
+    console.log("Email sent successfully! ID:", result.id);
     return { success: true, data: result };
   } catch (error) {
     console.error("Error sending email:", error);
