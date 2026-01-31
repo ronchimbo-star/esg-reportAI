@@ -101,23 +101,29 @@ export default function ReportsView() {
   const loadReports = async () => {
     try {
       setLoading(true);
+      console.log('[ReportsView] Loading reports with statusFilter:', statusFilter);
+
       const { data, error } = await supabase
         .from('generated_reports')
         .select('*')
+        .is('deleted_at', null)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      let filteredData = (data || []).filter(r => !r.deleted_at);
+      console.log('[ReportsView] Loaded reports (filtered by database):', data?.length);
+
+      let filteredData = data || [];
 
       if (statusFilter !== 'all') {
         filteredData = filteredData.filter(r => r.status === statusFilter);
+        console.log('[ReportsView] After status filter:', filteredData.length);
       }
 
       setReports(filteredData);
       setCurrentPage(1);
     } catch (error) {
-      console.error('Error loading reports:', error);
+      console.error('[ReportsView] Error loading reports:', error);
       setReports([]);
     } finally {
       setLoading(false);
@@ -212,12 +218,17 @@ export default function ReportsView() {
 
     try {
       setActionLoading(reportToDelete.id);
-      console.log('[ReportsView] Deleting report:', reportToDelete.id);
+      const deletedAt = new Date().toISOString();
+      console.log('[ReportsView] Deleting report:', {
+        reportId: reportToDelete.id,
+        adminId: adminUser.id,
+        deletedAt
+      });
 
       const { data, error } = await supabase
         .from('generated_reports')
         .update({
-          deleted_at: new Date().toISOString(),
+          deleted_at: deletedAt,
           deleted_by: adminUser.id,
         })
         .eq('id', reportToDelete.id)
@@ -228,7 +239,9 @@ export default function ReportsView() {
         throw error;
       }
 
-      console.log('[ReportsView] Report deleted successfully:', data);
+      console.log('[ReportsView] Report soft-deleted successfully:', data);
+      console.log('[ReportsView] Deleted report deleted_at field:', data?.[0]?.deleted_at);
+      console.log('[ReportsView] Now reloading reports list...');
       await loadReports();
       setDeleteConfirmOpen(false);
       setReportToDelete(null);
