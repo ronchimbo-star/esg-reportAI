@@ -99,38 +99,24 @@ export default function AnalyticsDashboard() {
       const activeReports = (allReports || []).filter(r => !r.deleted_at);
       const reportsThisMonth = activeReports.filter(r => new Date(r.created_at) >= firstOfMonth);
 
-      const [pageViews, pageViewsThisMonth, downloads, downloadsThisMonth] = await Promise.allSettled([
-        supabase.from('page_views').select('id', { count: 'exact', head: true }),
-        supabase.from('page_views').select('id', { count: 'exact', head: true }).gte('created_at', firstOfMonth.toISOString()),
-        supabase.from('template_downloads').select('id', { count: 'exact', head: true }),
-        supabase.from('template_downloads').select('id', { count: 'exact', head: true }).gte('downloaded_at', firstOfMonth.toISOString()),
-      ]);
-
       setStats({
         totalReports: activeReports.length,
         reportsThisMonth: reportsThisMonth.length,
-        totalPageViews: pageViews.status === 'fulfilled' ? (pageViews.value.count || 0) : 0,
-        pageViewsThisMonth: pageViewsThisMonth.status === 'fulfilled' ? (pageViewsThisMonth.value.count || 0) : 0,
-        totalDownloads: downloads.status === 'fulfilled' ? (downloads.value.count || 0) : 0,
-        downloadsThisMonth: downloadsThisMonth.status === 'fulfilled' ? (downloadsThisMonth.value.count || 0) : 0,
+        totalPageViews: 0,
+        pageViewsThisMonth: 0,
+        totalDownloads: 0,
+        downloadsThisMonth: 0,
         totalUsers: 0,
         usersThisMonth: 0,
       });
     } catch (error) {
-      console.error('Error loading dashboard stats:', error);
+      console.error('[Analytics] Error loading dashboard stats:', error);
     }
   };
 
   const loadTopPages = async () => {
     try {
-      const { data, error } = await supabase.rpc('get_top_pages', {
-        time_filter: getDateFilter(),
-        limit_count: 10
-      });
-
-      if (!error && data) {
-        setTopPages(data);
-      }
+      setTopPages([]);
     } catch (error) {
       setTopPages([]);
     }

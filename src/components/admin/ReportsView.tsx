@@ -46,6 +46,7 @@ export default function ReportsView() {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [reportToDelete, setReportToDelete] = useState<{ id: string; companyName: string } | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [testResults, setTestResults] = useState<string>('');
 
   useEffect(() => {
     console.log('[ReportsView] Component mounted, loading admin user...');
@@ -290,6 +291,76 @@ export default function ReportsView() {
     }
   };
 
+  const testDatabasePermissions = async () => {
+    console.log('[ReportsView] Testing database permissions...');
+    let results = '';
+
+    try {
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      results += `✓ Auth User: ${user?.email} (${user?.id})\n`;
+
+      if (!user) {
+        results += '✗ ERROR: No authenticated user\n';
+        setTestResults(results);
+        return;
+      }
+
+      const { data: adminCheck, error: adminError } = await supabase
+        .from('admin_users')
+        .select('id, user_id, email')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (adminError) {
+        results += `✗ Admin User Error: ${adminError.message}\n`;
+      } else if (adminCheck) {
+        results += `✓ Admin User: ${adminCheck.email} (Admin ID: ${adminCheck.id})\n`;
+      } else {
+        results += `✗ ERROR: No admin_users record for ${user.email}\n`;
+      }
+
+      const { data: reportsCheck, error: reportsError, count } = await supabase
+        .from('generated_reports')
+        .select('id', { count: 'exact', head: true });
+
+      if (reportsError) {
+        results += `✗ Read Reports Error: ${reportsError.message}\n`;
+      } else {
+        results += `✓ Can Read Reports: ${count} reports found\n`;
+      }
+
+      if (reports.length > 0 && adminCheck) {
+        const testReport = reports[0];
+        results += `\nTesting UPDATE on report: ${testReport.company_name}\n`;
+
+        const { data: updateResult, error: updateError } = await supabase
+          .from('generated_reports')
+          .update({ admin_notes: `Test note - ${new Date().toISOString()}` })
+          .eq('id', testReport.id)
+          .select();
+
+        if (updateError) {
+          results += `✗ UPDATE ERROR: ${updateError.message}\n`;
+          results += `  Code: ${updateError.code}\n`;
+          results += `  Details: ${updateError.details}\n`;
+          results += `  Hint: ${updateError.hint}\n`;
+        } else {
+          results += `✓ UPDATE SUCCESS: Report updated\n`;
+          await loadReports();
+        }
+      } else {
+        results += '\n⚠ Skipping UPDATE test (no reports or admin user)\n';
+      }
+
+    } catch (error: any) {
+      results += `\n✗ EXCEPTION: ${error.message}\n`;
+    }
+
+    console.log('[ReportsView] Test results:\n', results);
+    setTestResults(results);
+    alert('Test complete! Check the test results panel and console.');
+  };
+
   const filteredReports = reports.filter((report) => {
     const search = searchTerm.toLowerCase();
     return (
@@ -419,17 +490,48 @@ export default function ReportsView() {
       <div className="space-y-4 sm:space-y-6">
         {adminUser && (
           <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-            <p className="text-sm text-green-800">
-              ✓ Admin user loaded: ID {adminUser.id.substring(0, 8)}... (Check console for full details)
-            </p>
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-green-800">
+                ✓ Admin user loaded: ID {adminUser.id.substring(0, 8)}... (Check console for full details)
+              </p>
+              <button
+                onClick={testDatabasePermissions}
+                className="text-xs px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+              >
+                Test Permissions
+              </button>
+            </div>
           </div>
         )}
 
         {!adminUser && !loading && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-            <p className="text-sm text-red-800">
-              ⚠ Admin user not loaded. Action buttons will not work. Check console for errors.
-            </p>
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-red-800">
+                ⚠ Admin user not loaded. Action buttons will not work. Check console for errors.
+              </p>
+              <button
+                onClick={testDatabasePermissions}
+                className="text-xs px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Test Permissions
+              </button>
+            </div>
+          </div>
+        )}
+
+        {testResults && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="flex items-start justify-between mb-2">
+              <h3 className="font-semibold text-blue-900">Permission Test Results</h3>
+              <button
+                onClick={() => setTestResults('')}
+                className="text-xs text-blue-600 hover:text-blue-800"
+              >
+                Clear
+              </button>
+            </div>
+            <pre className="text-xs font-mono text-blue-900 whitespace-pre-wrap">{testResults}</pre>
           </div>
         )}
 
