@@ -45,31 +45,53 @@ export default function ReportsView() {
   const [currentNotesReport, setCurrentNotesReport] = useState<Report | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [reportToDelete, setReportToDelete] = useState<{ id: string; companyName: string } | null>(null);
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('[ReportsView] Component mounted, loading admin user...');
     loadAdminUser();
   }, []);
 
   useEffect(() => {
+    console.log('[ReportsView] Status filter changed to:', statusFilter);
     loadReports();
   }, [statusFilter]);
 
   const loadAdminUser = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      console.log('[ReportsView] Loading admin user...');
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+      if (authError) {
+        console.error('[ReportsView] Auth error:', authError);
+        return;
+      }
+
+      console.log('[ReportsView] Authenticated user:', user?.email, 'ID:', user?.id);
+
       if (user) {
-        const { data } = await supabase
+        const { data, error: dbError } = await supabase
           .from('admin_users')
           .select('id, user_id')
           .eq('user_id', user.id)
           .maybeSingle();
 
-        if (data) {
-          setAdminUser(data);
+        if (dbError) {
+          console.error('[ReportsView] Database error loading admin user:', dbError);
+          return;
         }
+
+        if (data) {
+          console.log('[ReportsView] Admin user loaded successfully:', data);
+          setAdminUser(data);
+        } else {
+          console.warn('[ReportsView] No admin user record found for:', user.email);
+        }
+      } else {
+        console.warn('[ReportsView] No authenticated user found');
       }
     } catch (error) {
-      console.error('Error loading admin user:', error);
+      console.error('[ReportsView] Error loading admin user:', error);
     }
   };
 
@@ -103,78 +125,161 @@ export default function ReportsView() {
     reportId: string,
     newStatus: 'new' | 'followed_up' | 'archived'
   ) => {
+    console.log('[ReportsView] updateReportStatus called', {
+      reportId,
+      newStatus,
+      adminUser: adminUser?.id,
+      hasAdminUser: !!adminUser
+    });
+
+    if (!adminUser) {
+      console.error('[ReportsView] Cannot update status: Admin user not loaded');
+      alert('Error: Admin user not loaded. Please refresh the page.');
+      return;
+    }
+
     try {
+      setActionLoading(reportId);
       const updateData: any = {
         status: newStatus,
       };
 
       if (newStatus === 'followed_up') {
         updateData.followed_up_at = new Date().toISOString();
-        updateData.followed_up_by = adminUser?.id;
+        updateData.followed_up_by = adminUser.id;
       } else if (newStatus === 'archived') {
         updateData.archived_at = new Date().toISOString();
-        updateData.archived_by = adminUser?.id;
+        updateData.archived_by = adminUser.id;
       }
 
-      const { error } = await supabase
+      console.log('[ReportsView] Updating report with data:', updateData);
+
+      const { data, error } = await supabase
         .from('generated_reports')
         .update(updateData)
-        .eq('id', reportId);
+        .eq('id', reportId)
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('[ReportsView] Database error updating report:', error);
+        throw error;
+      }
 
+      console.log('[ReportsView] Report updated successfully:', data);
       await loadReports();
-    } catch (error) {
-      console.error('Error updating report status:', error);
-      alert('Failed to update report status. Please try again.');
+      alert(`Report status updated to ${newStatus}`);
+    } catch (error: any) {
+      console.error('[ReportsView] Error updating report status:', {
+        error,
+        message: error?.message,
+        details: error?.details,
+        hint: error?.hint,
+        code: error?.code
+      });
+      alert(`Failed to update report status: ${error?.message || 'Unknown error'}. Check console for details.`);
+    } finally {
+      setActionLoading(null);
     }
   };
 
   const promptDeleteReport = (reportId: string, companyName: string) => {
+    console.log('[ReportsView] promptDeleteReport called', { reportId, companyName });
     setReportToDelete({ id: reportId, companyName });
     setDeleteConfirmOpen(true);
   };
 
   const confirmDeleteReport = async () => {
-    if (!reportToDelete) return;
+    console.log('[ReportsView] confirmDeleteReport called', {
+      reportToDelete,
+      adminUser: adminUser?.id,
+      hasAdminUser: !!adminUser
+    });
+
+    if (!reportToDelete) {
+      console.warn('[ReportsView] No report to delete');
+      return;
+    }
+
+    if (!adminUser) {
+      console.error('[ReportsView] Cannot delete: Admin user not loaded');
+      alert('Error: Admin user not loaded. Please refresh the page.');
+      return;
+    }
 
     try {
-      const { error } = await supabase
+      setActionLoading(reportToDelete.id);
+      console.log('[ReportsView] Deleting report:', reportToDelete.id);
+
+      const { data, error } = await supabase
         .from('generated_reports')
         .update({
           deleted_at: new Date().toISOString(),
-          deleted_by: adminUser?.id,
+          deleted_by: adminUser.id,
         })
-        .eq('id', reportToDelete.id);
+        .eq('id', reportToDelete.id)
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('[ReportsView] Database error deleting report:', error);
+        throw error;
+      }
 
+      console.log('[ReportsView] Report deleted successfully:', data);
       await loadReports();
       setDeleteConfirmOpen(false);
       setReportToDelete(null);
-    } catch (error) {
-      console.error('Error deleting report:', error);
-      alert('Failed to delete report. Please try again.');
+      alert('Report deleted successfully');
+    } catch (error: any) {
+      console.error('[ReportsView] Error deleting report:', {
+        error,
+        message: error?.message,
+        details: error?.details,
+        hint: error?.hint,
+        code: error?.code
+      });
+      alert(`Failed to delete report: ${error?.message || 'Unknown error'}. Check console for details.`);
+    } finally {
+      setActionLoading(null);
     }
   };
 
   const updateNotes = async (reportId: string, notes: string) => {
+    console.log('[ReportsView] updateNotes called', { reportId, notesLength: notes.length });
+
     try {
-      const { error } = await supabase
+      setActionLoading(reportId);
+      console.log('[ReportsView] Updating notes for report:', reportId);
+
+      const { data, error } = await supabase
         .from('generated_reports')
         .update({ admin_notes: notes })
-        .eq('id', reportId);
+        .eq('id', reportId)
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('[ReportsView] Database error updating notes:', error);
+        throw error;
+      }
 
+      console.log('[ReportsView] Notes updated successfully:', data);
       await loadReports();
-    } catch (error) {
-      console.error('Error updating notes:', error);
-      alert('Failed to update notes. Please try again.');
+      alert('Notes updated successfully');
+    } catch (error: any) {
+      console.error('[ReportsView] Error updating notes:', {
+        error,
+        message: error?.message,
+        details: error?.details,
+        hint: error?.hint,
+        code: error?.code
+      });
+      alert(`Failed to update notes: ${error?.message || 'Unknown error'}. Check console for details.`);
+    } finally {
+      setActionLoading(null);
     }
   };
 
   const openNotesModal = (report: Report) => {
+    console.log('[ReportsView] openNotesModal called', { reportId: report.id, companyName: report.company_name });
     setCurrentNotesReport(report);
     setNotesModalOpen(true);
   };
@@ -202,7 +307,10 @@ export default function ReportsView() {
   const currentReports = filteredReports.slice(startIndex, endIndex);
 
   const handleDownloadReport = (report: Report) => {
-    const htmlContent = `
+    console.log('[ReportsView] handleDownloadReport called', { reportId: report.id, companyName: report.company_name });
+
+    try {
+      const htmlContent = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -234,15 +342,20 @@ export default function ReportsView() {
 </body>
 </html>`;
 
-    const blob = new Blob([htmlContent], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${report.company_name.replace(/\s+/g, '-')}-esg-report-${report.id.substring(0, 8)}.html`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${report.company_name.replace(/\s+/g, '-')}-esg-report-${report.id.substring(0, 8)}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      console.log('[ReportsView] Report downloaded successfully');
+    } catch (error: any) {
+      console.error('[ReportsView] Error downloading report:', error);
+      alert(`Failed to download report: ${error?.message || 'Unknown error'}`);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -304,6 +417,22 @@ export default function ReportsView() {
       />
 
       <div className="space-y-4 sm:space-y-6">
+        {adminUser && (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+            <p className="text-sm text-green-800">
+              ✓ Admin user loaded: ID {adminUser.id.substring(0, 8)}... (Check console for full details)
+            </p>
+          </div>
+        )}
+
+        {!adminUser && !loading && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+            <p className="text-sm text-red-800">
+              ⚠ Admin user not loaded. Action buttons will not work. Check console for errors.
+            </p>
+          </div>
+        )}
+
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2">Generated Reports</h2>
@@ -411,32 +540,56 @@ export default function ReportsView() {
                   <div className="flex flex-wrap gap-2">
                     {report.status === 'new' && (
                       <button
-                        onClick={() => updateReportStatus(report.id, 'followed_up')}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                        onClick={() => {
+                          console.log('[ReportsView] Button clicked: Mark as Followed Up', report.id);
+                          updateReportStatus(report.id, 'followed_up');
+                        }}
+                        disabled={actionLoading === report.id}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <Send className="w-4 h-4" />
+                        {actionLoading === report.id ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Send className="w-4 h-4" />
+                        )}
                         Mark as Followed Up
                       </button>
                     )}
                     {report.status !== 'archived' && (
                       <button
-                        onClick={() => updateReportStatus(report.id, 'archived')}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium"
+                        onClick={() => {
+                          console.log('[ReportsView] Button clicked: Archive', report.id);
+                          updateReportStatus(report.id, 'archived');
+                        }}
+                        disabled={actionLoading === report.id}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <Archive className="w-4 h-4" />
+                        {actionLoading === report.id ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Archive className="w-4 h-4" />
+                        )}
                         Archive
                       </button>
                     )}
                     <button
-                      onClick={() => openNotesModal(report)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium border border-blue-200"
+                      onClick={() => {
+                        console.log('[ReportsView] Button clicked: Notes', report.id);
+                        openNotesModal(report);
+                      }}
+                      disabled={actionLoading === report.id}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium border border-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <StickyNote className="w-4 h-4" />
                       {report.admin_notes ? 'Edit Notes' : 'Add Notes'}
                     </button>
                     <button
-                      onClick={() => promptDeleteReport(report.id, report.company_name)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium border border-red-200"
+                      onClick={() => {
+                        console.log('[ReportsView] Button clicked: Delete', report.id);
+                        promptDeleteReport(report.id, report.company_name);
+                      }}
+                      disabled={actionLoading === report.id}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium border border-red-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Trash2 className="w-4 h-4" />
                       Delete
@@ -444,7 +597,10 @@ export default function ReportsView() {
                   </div>
                 </div>
                 <button
-                  onClick={() => handleDownloadReport(report)}
+                  onClick={() => {
+                    console.log('[ReportsView] Button clicked: Download', report.id);
+                    handleDownloadReport(report);
+                  }}
                   className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium w-full sm:w-auto"
                 >
                   <Download className="w-4 h-4" />
