@@ -585,30 +585,46 @@ Generated At: ${new Date().toISOString()}
 The full report has been sent to the user's email address.
     `.trim();
 
-    // Note: In production, integrate with an email service like Resend, SendGrid, or AWS SES
-    // For now, we'll log the email content
+    try {
+      const notificationResponse = await fetch(
+        `${supabaseUrl}/functions/v1/send-admin-notification`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${supabaseServiceKey}`,
+          },
+          body: JSON.stringify({
+            type: "report",
+            subject: adminEmailSubject,
+            data: {
+              company_name: companyName,
+              contact_name: contactName,
+              user_email: userEmail || 'Not provided',
+              industries: industries.join(', '),
+              jurisdictions: jurisdictions.join(', '),
+              frameworks: frameworks.join(', '),
+              user_ip: userIp,
+              generated_at: new Date().toISOString(),
+            },
+          }),
+        }
+      );
+
+      if (!notificationResponse.ok) {
+        console.error("Failed to send admin notification:", await notificationResponse.text());
+      } else {
+        console.log("Admin notification sent successfully");
+      }
+    } catch (notifError) {
+      console.error("Error sending admin notification:", notifError);
+    }
+
     console.log('=== EMAIL TO USER ===');
     console.log('To:', userEmail);
     console.log('Subject:', userEmailSubject);
     console.log('HTML Length:', emailHTML.length);
-
-    console.log('\n=== EMAIL TO ADMIN ===');
-    console.log('To: ronchimbo@gmail.com');
-    console.log('Subject:', adminEmailSubject);
-    console.log('Body:', adminEmailBody);
-
-    // In a real implementation, send emails here:
-    // await sendEmail({
-    //   to: userEmail,
-    //   subject: userEmailSubject,
-    //   html: emailHTML,
-    // });
-    //
-    // await sendEmail({
-    //   to: 'ronchimbo@gmail.com',
-    //   subject: adminEmailSubject,
-    //   text: adminEmailBody,
-    // });
+    console.log('\nNote: Email integration ready. Configure RESEND_API_KEY to send emails.');
 
     // Update report as email sent
     await supabase

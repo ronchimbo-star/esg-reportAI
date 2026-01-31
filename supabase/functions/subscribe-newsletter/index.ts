@@ -125,6 +125,34 @@ Deno.serve(async (req: Request) => {
       timestamp: new Date().toISOString(),
     });
 
+    try {
+      const notificationResponse = await fetch(
+        `${supabaseUrl}/functions/v1/send-admin-notification`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${supabaseKey}`,
+          },
+          body: JSON.stringify({
+            type: "newsletter",
+            subject: "New Newsletter Subscription",
+            data: {
+              email,
+              ip_address: ipAddress,
+              subscribed_at: new Date().toISOString(),
+            },
+          }),
+        }
+      );
+
+      if (!notificationResponse.ok) {
+        console.error("Failed to send admin notification:", await notificationResponse.text());
+      }
+    } catch (notifError) {
+      console.error("Error sending admin notification:", notifError);
+    }
+
     return new Response(
       JSON.stringify({
         success: true,
