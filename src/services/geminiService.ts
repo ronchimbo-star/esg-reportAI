@@ -284,7 +284,7 @@ export async function generateReport(
 
   try {
     const model = genAI.getGenerativeModel({
-      model: 'gemini-2.0-flash-exp',
+      model: 'gemini-1.5-flash',
       generationConfig: {
         temperature: 0.7,
         topP: 0.95,
@@ -334,7 +334,7 @@ export async function recommendFrameworks(
 ): Promise<string[]> {
   try {
     const model = genAI.getGenerativeModel({
-      model: 'gemini-2.0-flash-exp',
+      model: 'gemini-1.5-flash',
       generationConfig: {
         temperature: 0.3,
         maxOutputTokens: 500,
@@ -380,7 +380,7 @@ export async function generateESGDataTemplate(
 ): Promise<{ environmental: string; social: string; governance: string }> {
   try {
     const model = genAI.getGenerativeModel({
-      model: 'gemini-2.0-flash-exp',
+      model: 'gemini-1.5-flash',
       generationConfig: {
         temperature: 0.7,
         maxOutputTokens: 3000,
