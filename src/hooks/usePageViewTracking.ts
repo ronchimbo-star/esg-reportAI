@@ -38,7 +38,7 @@ export function usePageViewTracking() {
         user_id: user?.id || null,
       });
     } catch (error) {
-      console.error('Error tracking page view:', error);
+      // Silently fail - page view tracking is non-critical
     }
   };
 }
