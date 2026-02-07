@@ -314,6 +314,8 @@ export async function generateReport(
     if (error instanceof Error) {
       if (error.message.includes('API_KEY_INVALID') || error.message.includes('403')) {
         throw new Error('Invalid API key. Please check your Google Gemini API key in the .env file.');
+      } else if (error.message.includes('400')) {
+        throw new Error('Bad Request: Please ensure billing is enabled on your Google Cloud project. Visit https://console.cloud.google.com/billing to enable billing.');
       } else if (error.message.includes('429')) {
         throw new Error('Rate limit exceeded. Please wait a moment and try again.');
       } else if (error.message.includes('500') || error.message.includes('503')) {
