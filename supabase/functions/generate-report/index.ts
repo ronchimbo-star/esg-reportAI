@@ -1,3 +1,4 @@
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { GoogleGenerativeAI } from "npm:@google/generative-ai@0.24.1";
 
 const corsHeaders = {
